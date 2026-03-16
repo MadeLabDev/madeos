@@ -1,0 +1,80 @@
+flowchart TD
+  Start([User Access Design Workspace])
+  
+  Start --> Check{"Has Design<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return"])
+  
+  Check -->|Yes| Dashboard["🎨 DESIGN DASHBOARD<br/>━━━━━━━━━<br/>Active Projects<br/>Team Queue<br/>Recent Uploads<br/>Pending Approvals"]
+  
+  Dashboard --> Menu["📁 DESIGN MODULES"]
+  
+  Menu --> Projects["🎨 PROJECTS<br/>━━━━━━━━<br/>Project List<br/>Status Tracking<br/>Team Assignment<br/>Timeline"]
+  
+  Menu --> Decks["📊 DESIGN DECKS<br/>━━━━━━━━<br/>Product Selection<br/>Decoration Types<br/>File Management<br/>Versioning"]
+  
+  Menu --> Products["🛍️ PRODUCT DESIGN<br/>━━━━━━━━<br/>Product Mockups<br/>Graphic Specs<br/>Feasibility Check<br/>Engineering Review"]
+  
+  Menu --> Files["📁 FILES<br/>━━━━━━━━<br/>Separation Files<br/>Output Files<br/>Tech Packs<br/>Version Control"]
+  
+  Menu --> Approvals["✅ APPROVALS<br/>━━━━━━━━<br/>Pending Reviews<br/>Approval History<br/>Sign-off<br/>Changes Log"]
+  
+  Projects --> ProjActions["➕ New Project<br/>✏️ Edit Details<br/>👥 Assign Team<br/>📅 Set Timeline<br/>🎯 Set Status<br/>💬 Add Notes<br/>📤 Share with Customer"]
+  
+  Decks --> DeckActions["➕ New Design Deck<br/>🛍️ Select Products<br/>🎨 Choose Decoration<br/>📤 Upload Files<br/>📝 Add Specs<br/>🔄 Version Control<br/>✅ Approve"]
+  
+  Products --> ProdActions["📸 Add Mockup<br/>🎨 Define Graphic Spec<br/>⚙️ Engineering Check<br/>🔄 Feasibility Review<br/>💬 Add Comments<br/>🏷️ Tag Issues<br/>✅ Approve"]
+  
+  Files --> FileActions["📤 Upload AI/PDF<br/>📤 Upload DTG Files<br/>📤 Upload DTF Files<br/>📤 Upload Emb Files<br/>📋 Create Tech Pack<br/>🔄 Version Control<br/>📥 Download"]
+  
+  Approvals --> ApprovalActions["📋 Review Pending<br/>✅ Approve Design<br/>❌ Request Changes<br/>💬 Add Feedback<br/>✏️ Revise Design<br/>📊 View History<br/>📤 Send to Customer"]
+  
+  ProjActions --> Workflow{{"Workflow Stage?"}}
+  DeckActions --> Workflow
+  ProdActions --> Workflow
+  FileActions --> Workflow
+  ApprovalActions --> Workflow
+  
+  Workflow -->|Intake| Step1["1️⃣ INTAKE<br/>━━━━<br/>Create Project<br/>Upload Assets<br/>Define Scope"]
+  Workflow -->|Concepting| Step2["2️⃣ CONCEPTING<br/>━━━━<br/>Select Products<br/>Create Designs<br/>Mock-ups"]
+  Workflow -->|Feasibility| Step3["3️⃣ FEASIBILITY<br/>━━━━<br/>Engineering Review<br/>Validate Design<br/>Flag Issues"]
+  Workflow -->|Revision| Step4["4️⃣ REVISION<br/>━━━━<br/>Address Feedback<br/>Update Designs<br/>Re-review"]
+  Workflow -->|Deliverables| Step5["5️⃣ DELIVERABLES<br/>━━━━<br/>Generate Files<br/>Create Tech Pack<br/>Package Assets"]
+  Workflow -->|Approval| Step6["6️⃣ APPROVAL<br/>━━━━<br/>Customer Review<br/>Sign-off<br/>Final Files"]
+  
+  Step1 --> Step2
+  Step2 --> Step3
+  Step3 --> Step4
+  Step4 --> Step5
+  Step5 --> Step6
+  
+  Step6 --> Export["📤 EXPORT & DELIVER<br/>━━━━<br/>Download All Files<br/>Share Link<br/>Customer Portal"]
+  
+  Export --> Complete["✅ COMPLETE<br/>━━━━<br/>Archive Project<br/>Update Status<br/>Log Activity"]
+  
+  Complete --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style Dashboard fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style Menu fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style Projects fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+  style Decks fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+  style Products fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+  style Files fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+  style Approvals fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+  style ProjActions fill:#f48fb1,stroke:#880e4f,stroke-width:1px
+  style DeckActions fill:#f48fb1,stroke:#880e4f,stroke-width:1px
+  style ProdActions fill:#f48fb1,stroke:#880e4f,stroke-width:1px
+  style FileActions fill:#f48fb1,stroke:#880e4f,stroke-width:1px
+  style ApprovalActions fill:#f48fb1,stroke:#880e4f,stroke-width:1px
+  style Workflow fill:#fff3e0,stroke:#e65100,stroke-width:2px
+  style Step1 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step2 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step3 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step4 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step5 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step6 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Export fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Complete fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

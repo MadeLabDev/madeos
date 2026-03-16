@@ -1,0 +1,66 @@
+flowchart LR
+  subgraph Users["👥 Users - Internal & External"]
+    A1[Super Admin]
+    A2[Ops Admin]
+    A3[Vertical Lead]
+    A4[Team Member]
+    A5[Finance/RevOps]
+    A6[Marketing]
+    B1[Customer]
+    B2[Event Attendee]
+    B3[Sponsor/Partner]
+    B4[Contractor]
+  end
+
+  subgraph App["🏛️ MADE OS - Next.js 16 App Router"]
+    direction TB
+    AUTH["🔐 Authentication<br/>NextAuth v5 + Google OAuth<br/>JWT tokens, 2FA"]
+    CRM["💼 CRM Core<br/>Organizations, Contacts<br/>Opportunities, Engagements"]
+    VERTICAL["🏭 Vertical Workspaces<br/>Design, Events<br/>Testing, Training"]
+    SHARED["🔗 Shared Modules<br/>Tasks, Files, Notifications<br/>Activity Timeline"]
+    RBAC["🛡️ RBAC System<br/>Roles, Permissions<br/>Module & Action level"]
+    PORTALS["🌐 Public Portals<br/>Customer, Event<br/>Sponsor Portal"]
+  end
+
+  subgraph Services["🔧 External Services"]
+    DB["🗄️ Database<br/>MySQL (Prod)<br/>SQLite (Dev)<br/>via Prisma ORM"]
+    AUTH_EXT["🔑 Auth Services<br/>Google OAuth<br/>bcryptjs"]
+    STORAGE["💾 Cloud Storage<br/>AWS S3<br/>DigitalOcean Spaces"]
+    EMAIL["📧 Email<br/>SMTP (SendGrid)<br/>React Email Templates"]
+    RT["⚡ Real-time<br/>Pusher WebSockets<br/>Live notifications"]
+    PAYMENT["💳 Payment<br/>Stripe<br/>Payment processing"]
+    ACCOUNTING["📊 Accounting<br/>QuickBooks<br/>Invoice sync"]
+    MONITOR["📈 Monitoring<br/>Activity Logs<br/>Error Tracking"]
+  end
+
+  A1 & A2 & A3 & A4 & A5 & A6 -->|internal access| App
+  B1 & B2 & B3 & B4 -->|external access| App
+
+  AUTH -->|secures| CRM
+  AUTH -->|secures| VERTICAL
+  RBAC -->|controls| CRM
+  RBAC -->|controls| VERTICAL
+  RBAC -->|controls| SHARED
+  CRM -->|foundation| VERTICAL
+  VERTICAL -->|uses| SHARED
+  PORTALS -->|displays| CRM
+  PORTALS -->|displays| VERTICAL
+
+  App -->|persist data| DB
+  App -->|authenticate| AUTH_EXT
+  App -->|store files| STORAGE
+  App -->|send emails| EMAIL
+  App -->|real-time updates| RT
+  App -->|process payments| PAYMENT
+  App -->|sync financials| ACCOUNTING
+  App -->|track actions| MONITOR
+
+  style Users fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style App fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  style Services fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style AUTH fill:#ecf0f1,stroke:#2c3e50,stroke-width:1px
+  style CRM fill:#fce4ec,stroke:#880e4f,stroke-width:1px
+  style VERTICAL fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style SHARED fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style RBAC fill:#f3e5f5,stroke:#4a148c,stroke-width:1px
+  style PORTALS fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px

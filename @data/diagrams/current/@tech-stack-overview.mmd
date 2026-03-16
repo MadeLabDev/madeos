@@ -1,0 +1,46 @@
+%% init { 'theme': 'dark', 'flowchart': { 'nodeSpacing': 150, 'rankSpacing': 120 } }
+flowchart LR
+  classDef backend fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:3px;
+  classDef frontend fill:#065f46,stroke:#34d399,color:#ffffff,stroke-width:3px;
+  classDef testing fill:#92400e,stroke:#fbbf24,color:#ffffff,stroke-width:3px;
+  classDef devtools fill:#374151,stroke:#d1d5db,color:#ffffff,stroke-width:3px;
+
+  subgraph "BACKEND"
+    direction TB
+    Server["Server & Framework, Next.js 16 App Router, API Routes, Server Actions, SSR"]:::backend
+    DB["Database, Prisma ORM, MySQL (Prod), SQLite (Dev)"]:::backend
+    AuthServices["Auth & Services, NextAuth.js v5, JWT, Google OAuth, bcryptjs, Pusher, React Email, AWS S3, node-cron"]:::backend
+  end
+
+  DevTools["DEVELOPMENT TOOLS, TypeScript (ES2022), ESLint (Linting), Prettier (Formatting), Prisma Studio (DB GUI)"]:::devtools
+
+  Testing["TESTING & QUALITY, Vitest (Unit/Integration), Playwright (E2E), Testing Library (React Testing)"]:::testing
+
+  subgraph "FRONTEND"
+    direction TB
+    Core["Core, React 19 (Server & Client)"]:::frontend
+    UI["UI & Styling, Tailwind CSS v4, Shadcn UI, SASS/SCSS, next-themes"]:::frontend
+    Libs["Libraries, Lexical, React Hook Form + Zod, @dnd-kit, Lightbox, Speech Rec, Lucide Icons, Sonner"]:::frontend
+  end
+
+  subgraph "INFRASTRUCTURE & DEPLOYMENT"
+    direction LR
+    HostingDB["Hosting & Database, Vercel (build, generate, migrate), MySQL (Prod), SQLite (Dev)"]:::backend
+    StorageRealTime["Storage & Real-time, AWS S3 / DO Spaces, Pusher (WebSockets)"]:::backend
+    EmailAutomation["Email & Automation, SMTP + React Email, node-cron (Scheduling)"]:::backend
+  end
+
+  %% Connections
+  Server -->|Data & Rendering| Core
+  DB -->|Data Models| Core
+  AuthServices -->|Auth & Integrations| Core
+  Core -->|UI Framework| UI
+  UI -->|Enhanced UI| Libs
+  Core -->|Component Logic| Libs
+  Server -->|Deployment| HostingDB
+  DB -->|DB Infra| HostingDB
+  AuthServices -->|Storage & Real-time| StorageRealTime
+  AuthServices -->|Email & Scheduling| EmailAutomation
+  Testing -->|Quality Checks| Server
+  DevTools -->|Development| Server
+  DevTools -->|Tooling Support| Testing

@@ -1,0 +1,497 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+MADE Laboratory - Shadcn Style Colors
+Clean, modern, sophisticated monochrome
+============================================ */
+@import "./styles/coursecontent.css";
+
+@theme {
+	/* ===== LIGHT MODE (Shadcn Zinc - Soft Contrast) ===== */
+	--color-background: hsl(0 0% 100%);
+	--color-foreground: hsl(240 10% 3.9%);
+	--color-card: hsl(0 0% 100%);
+	--color-card-foreground: hsl(240 10% 3.9%);
+	--color-popover: hsl(0 0% 100%);
+	--color-popover-foreground: hsl(240 10% 3.9%);
+
+	--color-primary: hsl(240 5.9% 10%);
+	--color-primary-foreground: hsl(0 0% 98%);
+
+	--color-secondary: hsl(240 4.8% 95.9%);
+	--color-secondary-foreground: hsl(240 5.9% 10%);
+
+	--color-muted: hsl(240 4.8% 95.9%);
+	--color-muted-foreground: hsl(240 3.8% 46.1%);
+
+	--color-accent: hsl(240 4.8% 95.9%);
+	--color-accent-foreground: hsl(240 5.9% 10%);
+
+	--color-border: hsl(240 5.9% 90%);
+	--color-input: hsl(240 5.9% 90%);
+	--color-ring: hsl(240 5.9% 10%);
+
+	/* ===== SEMANTIC COLORS ===== */
+	--color-success: hsl(142 76% 36%);
+	--color-success-foreground: hsl(0 0% 98%);
+
+	--color-warning: hsl(38 92% 50%);
+	--color-warning-foreground: hsl(0 0% 9%);
+
+	--color-error: hsl(0 84.2% 60.2%);
+	--color-error-foreground: hsl(0 0% 98%);
+
+	--color-info: hsl(221 83% 53%);
+	--color-info-foreground: hsl(0 0% 98%);
+
+	--color-destructive: hsl(0 84.2% 60.2%);
+	--color-destructive-foreground: hsl(0 0% 98%);
+
+	/* ===== WORKFLOW STATUS ===== */
+	--color-status-pending: hsl(0 0% 64.9%);
+	--color-status-in-progress: hsl(221 83% 53%);
+	--color-status-completed: hsl(142 76% 36%);
+	--color-status-cancelled: hsl(0 0% 45.1%);
+
+	/* ===== CHARTS ===== */
+	--color-chart-1: hsl(0 0% 20%);
+	--color-chart-2: hsl(0 0% 35%);
+	--color-chart-3: hsl(0 0% 50%);
+	--color-chart-4: hsl(0 0% 65%);
+	--color-chart-5: hsl(0 0% 80%);
+
+	--radius: 0.5rem;
+}
+
+.dark {
+	/* ===== DARK MODE (Shadcn Zinc - Soft Contrast) ===== */
+	--color-background: hsl(240 10% 3.9%);
+	--color-foreground: hsl(0 0% 98%);
+	--color-card: hsl(240 10% 3.9%);
+	--color-card-foreground: hsl(0 0% 98%);
+	--color-popover: hsl(240 10% 3.9%);
+	--color-popover-foreground: hsl(0 0% 98%);
+
+	--color-primary: hsl(0 0% 98%);
+	--color-primary-foreground: hsl(240 5.9% 10%);
+
+	--color-secondary: hsl(240 3.7% 15.9%);
+	--color-secondary-foreground: hsl(0 0% 98%);
+
+	--color-muted: hsl(240 3.7% 15.9%);
+	--color-muted-foreground: hsl(240 5% 64.9%);
+
+	--color-accent: hsl(240 3.7% 15.9%);
+	--color-accent-foreground: hsl(0 0% 98%);
+
+	--color-border: hsl(240 3.7% 15.9%);
+	--color-input: hsl(240 3.7% 15.9%);
+	--color-ring: hsl(240 4.9% 83.9%);
+
+	/* ===== SEMANTIC COLORS (Dark adjusted) ===== */
+	--color-success: hsl(142 71% 45%);
+	--color-success-foreground: hsl(0 0% 9%);
+
+	--color-warning: hsl(38 92% 50%);
+	--color-warning-foreground: hsl(0 0% 9%);
+
+	--color-error: hsl(0 62.8% 30.6%);
+	--color-error-foreground: hsl(0 0% 98%);
+
+	--color-info: hsl(221 83% 53%);
+	--color-info-foreground: hsl(0 0% 98%);
+
+	--color-destructive: hsl(0 62.8% 30.6%);
+	--color-destructive-foreground: hsl(0 0% 98%);
+
+	/* ===== WORKFLOW STATUS ===== */
+	--color-status-pending: hsl(0 0% 50%);
+	--color-status-in-progress: hsl(221 83% 53%);
+	--color-status-completed: hsl(142 71% 45%);
+	--color-status-cancelled: hsl(0 0% 40%);
+
+	/* ===== CHARTS ===== */
+	--color-chart-1: hsl(0 0% 80%);
+	--color-chart-2: hsl(0 0% 65%);
+	--color-chart-3: hsl(0 0% 50%);
+	--color-chart-4: hsl(0 0% 35%);
+	--color-chart-5: hsl(0 0% 20%);
+
+	/* ===== SIDEBAR ===== */
+	--color-sidebar-background: hsl(240 5.9% 10%);
+	--color-sidebar-foreground: hsl(240 4.8% 95.9%);
+	--color-sidebar-primary: hsl(0 0% 98%);
+	--color-sidebar-primary-foreground: hsl(240 5.9% 10%);
+	--color-sidebar-accent: hsl(240 3.7% 15.9%);
+	--color-sidebar-accent-foreground: hsl(0 0% 98%);
+	--color-sidebar-border: hsl(240 3.7% 15.9%);
+	--color-sidebar-ring: hsl(240 4.9% 83.9%);
+}
+
+/* ============================================
+   UTILITY CLASSES - Status Badges
+   Use: <Badge className="badge-success">Completed</Badge>
+   ============================================ */
+
+@layer components {
+	.badge-success {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-success/10 text-success border-success/20;
+	}
+
+	.badge-warning {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-warning/10 text-warning border-warning/20;
+	}
+
+	.badge-error {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-error/10 text-error border-error/20;
+	}
+
+	.badge-info {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-info/10 text-info border-info/20;
+	}
+
+	/* Workflow status badges */
+	.badge-pending {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-status-pending/10 text-status-pending border-status-pending/20;
+	}
+
+	.badge-in-progress {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-status-in-progress/10 text-status-in-progress border-status-in-progress/20;
+	}
+
+	.badge-completed {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-status-completed/10 text-status-completed border-status-completed/20;
+	}
+
+	.badge-cancelled {
+		@apply inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
+		@apply bg-status-cancelled/10 text-status-cancelled border-status-cancelled/20;
+	}
+
+	/* Alert variants */
+	.alert-success {
+		@apply border-success/50 bg-success/10 text-success;
+	}
+
+	.alert-warning {
+		@apply border-warning/50 bg-warning/10 text-warning;
+	}
+
+	.alert-error {
+		@apply border-error/50 bg-error/10 text-error;
+	}
+
+	.alert-info {
+		@apply border-info/50 bg-info/10 text-info;
+	}
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground antialiased;
+	}
+
+	/* Focus ring */
+	:focus-visible {
+		@apply ring-ring ring-offset-background ring-2 ring-offset-2 outline-none;
+	}
+
+	/* Headings */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-semibold tracking-tight;
+	}
+
+	h1 {
+		@apply text-4xl;
+	}
+
+	h2 {
+		@apply text-3xl;
+	}
+
+	h3 {
+		@apply text-2xl;
+	}
+
+	h4 {
+		@apply text-xl;
+	}
+
+	/* Links */
+	a {
+		@apply text-primary hover:underline;
+	}
+
+	/* Code */
+	code {
+		@apply bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+	}
+
+	/* Pre */
+	pre {
+		@apply bg-muted overflow-x-auto rounded-lg p-4;
+	}
+
+	/* Scrollbar styling */
+	::-webkit-scrollbar {
+		@apply h-2 w-2;
+	}
+
+	::-webkit-scrollbar-track {
+		@apply bg-muted;
+	}
+
+	::-webkit-scrollbar-thumb {
+		@apply bg-border rounded-full;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-ring;
+	}
+}
+
+/* ===========================================
+   Toast (Sonner) Custom Styles
+   ============================================ */
+
+/* Base Toast (applies to all toasts) */
+[data-sonner-toast] {
+	background-color: hsl(0 0% 100%) !important;
+	border: 1px solid hsl(240 5.9% 90%) !important;
+	color: hsl(240 10% 3.9%) !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+	border-radius: 0.5rem !important;
+}
+
+/* Success Toast */
+[data-sonner-toast][data-type="success"] {
+	background-color: hsl(142 76% 36%) !important;
+	border-color: hsl(142 71% 30%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-title] {
+	color: hsl(0 0% 100%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="success"] [data-description] {
+	color: hsl(142 76% 90%) !important;
+}
+
+/* Error Toast */
+[data-sonner-toast][data-type="error"] {
+	background-color: hsl(0 84.2% 60.2%) !important;
+	border-color: hsl(0 84.2% 50%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-title] {
+	color: hsl(0 0% 100%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="error"] [data-description] {
+	color: hsl(0 84% 85%) !important;
+}
+
+/* Warning Toast */
+[data-sonner-toast][data-type="warning"] {
+	background-color: hsl(38 92% 50%) !important;
+	border-color: hsl(38 92% 40%) !important;
+	color: hsl(0 0% 9%) !important;
+}
+
+[data-sonner-toast][data-type="warning"] [data-icon] {
+	color: hsl(0 0% 9%) !important;
+}
+
+[data-sonner-toast][data-type="warning"] [data-title] {
+	color: hsl(0 0% 5%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="warning"] [data-description] {
+	color: hsl(0 0% 20%) !important;
+}
+
+/* Info Toast */
+[data-sonner-toast][data-type="info"] {
+	background-color: hsl(221 83% 53%) !important;
+	border-color: hsl(221 83% 43%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="info"] [data-icon] {
+	color: hsl(0 0% 98%) !important;
+}
+
+[data-sonner-toast][data-type="info"] [data-title] {
+	color: hsl(0 0% 100%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="info"] [data-description] {
+	color: hsl(221 83% 85%) !important;
+}
+
+/* Loading Toast */
+[data-sonner-toast][data-type="loading"] {
+	background-color: hsl(240 4.8% 95.9%) !important;
+	border-color: hsl(240 5.9% 90%) !important;
+	color: hsl(240 10% 3.9%) !important;
+}
+
+[data-sonner-toast][data-type="loading"] [data-icon] {
+	color: hsl(240 5.9% 10%) !important;
+}
+
+[data-sonner-toast][data-type="loading"] [data-title] {
+	color: hsl(240 10% 3.9%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="loading"] [data-description] {
+	color: hsl(240 3.8% 46.1%) !important;
+}
+
+/* Default Toast */
+[data-sonner-toast][data-type="default"] {
+	background-color: hsl(0 0% 100%) !important;
+	border-color: hsl(240 5.9% 90%) !important;
+	color: hsl(240 10% 3.9%) !important;
+}
+
+[data-sonner-toast][data-type="default"] [data-icon] {
+	color: hsl(240 5.9% 10%) !important;
+}
+
+[data-sonner-toast][data-type="default"] [data-title] {
+	color: hsl(240 10% 3.9%) !important;
+	font-weight: 600;
+}
+
+[data-sonner-toast][data-type="default"] [data-description] {
+	color: hsl(240 3.8% 46.1%) !important;
+}
+
+/* Dark Mode Toast Adjustments */
+
+/* Base Toast - Dark Mode */
+.dark [data-sonner-toast] {
+	background-color: hsl(240 10% 3.9%) !important;
+	border-color: hsl(240 3.7% 15.9%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+.dark [data-sonner-toast][data-type="success"] {
+	background-color: hsl(142 71% 45%) !important;
+	border-color: hsl(142 71% 35%) !important;
+}
+
+.dark [data-sonner-toast][data-type="error"] {
+	background-color: hsl(0 62.8% 30.6%) !important;
+	border-color: hsl(0 62.8% 25%) !important;
+}
+
+.dark [data-sonner-toast][data-type="warning"] {
+	background-color: hsl(38 92% 50%) !important;
+	border-color: hsl(38 92% 40%) !important;
+}
+
+.dark [data-sonner-toast][data-type="info"] {
+	background-color: hsl(217 91% 60%) !important;
+	border-color: hsl(217 91% 50%) !important;
+}
+
+.dark [data-sonner-toast][data-type="loading"] {
+	background-color: hsl(240 3.7% 15.9%) !important;
+	border-color: hsl(240 3.7% 25%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+.dark [data-sonner-toast][data-type="loading"] [data-title] {
+	color: hsl(0 0% 98%) !important;
+}
+
+.dark [data-sonner-toast][data-type="loading"] [data-description] {
+	color: hsl(240 5% 64.9%) !important;
+}
+
+.dark [data-sonner-toast][data-type="default"] {
+	background-color: hsl(240 10% 3.9%) !important;
+	border-color: hsl(240 3.7% 15.9%) !important;
+	color: hsl(0 0% 98%) !important;
+}
+
+.dark [data-sonner-toast][data-type="default"] [data-title] {
+	color: hsl(0 0% 98%) !important;
+}
+
+.dark [data-sonner-toast][data-type="default"] [data-description] {
+	color: hsl(240 5% 64.9%) !important;
+}
+
+.dark [data-sonner-toast][data-type="default"] [data-icon] {
+	color: hsl(0 0% 98%) !important;
+}
+
+/* Toast Action Button */
+[data-sonner-toast] [data-button] {
+	background-color: rgba(255, 255, 255, 0.2) !important;
+	color: inherit !important;
+	border: 1px solid rgba(255, 255, 255, 0.3) !important;
+	transition: all 0.2s ease;
+}
+
+[data-sonner-toast] [data-button]:hover {
+	background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Toast Close Button */
+[data-sonner-toast] [data-close-button] {
+	background-color: transparent !important;
+	color: inherit !important;
+	border: none !important;
+	opacity: 0.7;
+	transition: opacity 0.2s ease;
+}
+
+[data-sonner-toast] [data-close-button]:hover {
+	opacity: 1;
+}
+
+/* Toast Progress Bar */
+[data-sonner-toast] [data-progress] {
+	background-color: rgba(255, 255, 255, 0.3) !important;
+}

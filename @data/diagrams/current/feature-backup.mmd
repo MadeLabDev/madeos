@@ -1,0 +1,21 @@
+flowchart TD
+  BACKUP[Backup] --> RUN_MANUAL[Run Manual Backup]
+  BACKUP --> VIEW_JOBS[View Jobs]
+  BACKUP --> STATS[Stats]
+  BACKUP --> SETTINGS[Settings]
+
+  subgraph Data
+    BR[BackupRecord] --> STATUS[Status]
+    BR --> SIZE[File Size]
+    BR --> URL[R2 URL]
+    BR --> TYPE[Backup Type]
+    BS[BackupStats] --> TOTAL[Total Count]
+    BS --> SUCCESS[Successful]
+    BS --> FAILED[Failed]
+    BSET[BackupSettings] --> RET[Retention Days]
+  end
+
+  RUN_MANUAL --> BR
+  VIEW_JOBS --> BR
+  STATS --> BS
+  SETTINGS --> BSET

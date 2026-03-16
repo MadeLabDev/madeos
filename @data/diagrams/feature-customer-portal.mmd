@@ -1,0 +1,91 @@
+flowchart TD
+  Start([Customer Access Portal])
+  
+  Start --> Auth["🔐 AUTHENTICATION<br/>━━━━━━━━<br/>Magic Link Login<br/>Email Verification<br/>Session Management"]
+  
+  Auth --> Login{"Valid<br/>Login?"}
+  Login -->|No| AuthFail["❌ Invalid Credentials<br/>Resend Link"]
+  AuthFail --> Auth
+  
+  Login -->|Yes| Dashboard["🏢 CUSTOMER PORTAL<br/>━━━━━━━━<br/>Welcome<br/>Quick Links<br/>Recent Activity<br/>Support Contact"]
+  
+  Dashboard --> Menu["📁 MAIN OPTIONS"]
+  
+  Menu --> Engagements["🤝 ENGAGEMENTS<br/>━━━━━━━━<br/>Active Projects<br/>Status Tracking<br/>Timeline<br/>Team Contact"]
+  
+  Menu --> Approvals["✅ APPROVALS<br/>━━━━━━━━<br/>Pending Reviews<br/>Design Review<br/>Deliverables<br/>Sign-off"]
+  
+  Menu --> Assets["📁 ASSETS<br/>━━━━━━━━<br/>File Downloads<br/>Design Files<br/>Tech Packs<br/>Reports"]
+  
+  Menu --> Invoices["💳 INVOICES<br/>━━━━━━━━<br/>Invoice List<br/>Payment Status<br/>Download Invoice<br/>Payment Methods"]
+  
+  Menu --> Requests["📝 REQUESTS<br/>━━━━━━━━<br/>New Request<br/>Request Status<br/>Request History<br/>Attachments"]
+  
+  Menu --> Activity["📊 ACTIVITY<br/>━━━━━━━━<br/>Timeline<br/>Comments<br/>Updates<br/>Notifications"]
+  
+  Engagements --> EngView["👁️ VIEW ENGAGEMENTS<br/>━━━━━━━<br/>List View<br/>Active Only<br/>Completed<br/>Archived<br/>━━━━━━━<br/>➡️ Click to View Detail"]
+  
+  EngView --> EngDetail["📋 ENGAGEMENT DETAIL<br/>━━━━━━━<br/>Status & Timeline<br/>Team Members<br/>Budget/Timeline<br/>━━━━━━━<br/>💬 Add Comment<br/>📎 Upload File<br/>📧 Email Team"]
+  
+  Approvals --> ApprovalList["✅ PENDING APPROVALS<br/>━━━━━━━<br/>Review Items<br/>Design Files<br/>Deliverables<br/>━━━━━━━<br/>➡️ Click to Review"]
+  
+  ApprovalList --> ApprovalDetail["🔍 REVIEW DETAIL<br/>━━━━━━━<br/>View Design<br/>Specifications<br/>Technical Details<br/>━━━━━━━<br/>✅ Approve<br/>❌ Request Changes<br/>💬 Add Feedback"]
+  
+  Assets --> AssetList["📁 FILE LIBRARY<br/>━━━━━━━<br/>Recent Files<br/>By Type<br/>By Engagement<br/>━━━━━━━<br/>➡️ Click to Download"]
+  
+  AssetList --> AssetDetail["📥 DOWNLOAD FILE<br/>━━━━━━━<br/>File Preview<br/>File Info<br/>Version History<br/>━━━━━━━<br/>📥 Download<br/>🔍 Preview<br/>📋 View Versions"]
+  
+  Invoices --> InvoiceList["💳 INVOICES & BILLING<br/>━━━━━━━<br/>All Invoices<br/>Pending Payment<br/>Paid Invoices<br/>━━━━━━━<br/>➡️ Click to View"]
+  
+  InvoiceList --> InvoiceDetail["📄 INVOICE DETAIL<br/>━━━━━━━<br/>Invoice Details<br/>Line Items<br/>Payment Terms<br/>━━━━━━━<br/>📥 Download PDF<br/>💳 Pay Now"]
+  
+  Requests --> RequestList["📝 SERVICE REQUESTS<br/>━━━━━━━<br/>New Request Form<br/>Request History<br/>Status Tracking<br/>━━━━━━━<br/>➡️ Submit or Track"]
+  
+  RequestList --> RequestForm["📝 NEW REQUEST FORM<br/>━━━━━━━<br/>Service Type<br/>Description<br/>Attachments<br/>Due Date<br/>Budget<br/>━━━━━━━<br/>✅ Submit Request<br/>💾 Save Draft"]
+  
+  Activity --> ActivityList["📊 ACTIVITY TIMELINE<br/>━━━━━━━<br/>All Updates<br/>Comments<br/>Approvals<br/>File Changes<br/>━━━━━━━<br/>🔍 Filter<br/>📤 Export"]
+  
+  EngDetail --> Actions1["💬 Add Comment<br/>📎 Attach File<br/>📧 Email Team<br/>⭐ Favorite<br/>🔔 Notification Prefs"]
+  ApprovalDetail --> Actions2["✅ Approve<br/>❌ Request Changes<br/>💬 Add Feedback<br/>📧 Email Designer"]
+  AssetDetail --> Actions3["📥 Download<br/>🔍 Preview<br/>📋 Versions<br/>📧 Share Link"]
+  InvoiceDetail --> Actions4["💳 Pay Invoice<br/>📥 Download PDF<br/>📧 Email Invoice<br/>💬 Payment Questions"]
+  RequestForm --> Actions5["✅ Submit<br/>💾 Save Draft<br/>📎 Add Attachment<br/>❌ Cancel"]
+  ActivityList --> Actions6["🔍 Filter Events<br/>📤 Export Timeline<br/>🔔 Notification Prefs"]
+  
+  Actions1 --> Logout["🚪 LOGOUT"]
+  Actions2 --> Logout
+  Actions3 --> Logout
+  Actions4 --> Logout
+  Actions5 --> Logout
+  Actions6 --> Logout
+  
+  Logout --> End(["End Session"])
+  
+  style Start fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Auth fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Dashboard fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Menu fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Engagements fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Approvals fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Assets fill:#f0f4c3,stroke:#557a00,stroke-width:2px
+  style Invoices fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style Requests fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Activity fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style EngView fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style EngDetail fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style ApprovalList fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style ApprovalDetail fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style AssetList fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style AssetDetail fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style InvoiceList fill:#ede7f6,stroke:#3f2c70,stroke-width:1px
+  style InvoiceDetail fill:#ede7f6,stroke:#3f2c70,stroke-width:1px
+  style RequestList fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style RequestForm fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style ActivityList fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
+  style Actions1 fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style Actions2 fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style Actions3 fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style Actions4 fill:#ede7f6,stroke:#3f2c70,stroke-width:1px
+  style Actions5 fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style Actions6 fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
+  style AuthFail fill:#ffebee,stroke:#c62828,stroke-width:2px

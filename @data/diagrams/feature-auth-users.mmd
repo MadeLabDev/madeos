@@ -1,0 +1,149 @@
+flowchart TD
+  Start([User Visit App])
+  
+  Start --> Check{"Has Session?"}
+  Check -->|Yes| CheckExp{"Session<br/>Expired?"}
+  CheckExp -->|Yes| AuthStart["🔐 AUTHENTICATION"]
+  CheckExp -->|No| Dashboard
+  Check -->|No| AuthStart
+  
+  subgraph Auth["🔐 AUTHENTICATION"]
+    direction TB
+    AuthDash["AUTH DASHBOARD<br/>━━━━━━━<br/>Login / Signup<br/>Forgot Password<br/>2FA Setup"]
+    Login["📧 SIGN IN<br/>Email + Password<br/>OR<br/>Google OAuth"]
+    Signup["✍️ SIGN UP<br/>Create Account<br/>Verify Email<br/>Set Password"]
+    Forgot["🔑 FORGOT PASSWORD<br/>Email Link<br/>Password Reset<br/>Verify New Password"]
+    TwoFA["🔐 TWO FACTOR<br/>Setup TOTP<br/>Backup Codes<br/>Verify on Login"]
+    
+    AuthDash -->|Sign In| Login
+    AuthDash -->|Sign Up| Signup
+    AuthDash -->|Forgot| Forgot
+    AuthDash -->|2FA| TwoFA
+    
+    Login -->|Success| CreateSession["✅ Create Session<br/>JWT Token<br/>Session Cookie<br/>Redirect"]
+    Signup -->|Success| CreateSession
+    Forgot -->|Success| CreateSession
+    TwoFA -->|Success| CreateSession
+    
+    Login -->|Fail| Error1["❌ Invalid Credentials<br/>Retry or Forgot Password"]
+    Signup -->|Fail| Error2["❌ Email Exists<br/>Or Invalid Data<br/>Retry Signup"]
+    
+    Error1 --> AuthDash
+    Error2 --> AuthDash
+  end
+  
+  AuthStart --> Auth
+  Auth --> Dashboard
+  
+  subgraph RBAC["🛡️ RBAC SYSTEM"]
+    direction TB
+    RoleCheck["Check User Roles<br/>━━━━━━━<br/>Super Admin<br/>Ops Admin<br/>Vertical Lead<br/>Team Member<br/>Finance, Marketing<br/>Customer<br/>Attendee, Sponsor"]
+    ModuleCheck["Check Module<br/>Permissions<br/>━━━━━━━<br/>CRM<br/>Design<br/>Events<br/>Testing<br/>Training"]
+    ActionCheck["Check Action<br/>Permissions<br/>━━━━━━━<br/>Create<br/>Read<br/>Update<br/>Delete<br/>Approve"]
+    OrgCheck["Check Organization<br/>Level Access<br/>━━━━━━━<br/>Own Organization<br/>Assigned Contacts<br/>Vertical Data"]
+    
+    RoleCheck --> ModuleCheck
+    ModuleCheck --> ActionCheck
+    ActionCheck --> OrgCheck
+  end
+  
+  Dashboard["📊 DASHBOARD<br/>━━━━━━━<br/>Welcome<br/>Quick Stats<br/>Recent Items<br/>Navigation"]
+  
+  Dashboard --> CheckPerms["Check Permissions"]
+  CheckPerms --> RBAC
+  
+  subgraph CheckDash["Permission Check"]
+    direction TB
+    HasAccess{"All Checks<br/>Pass?"}
+  end
+  
+  RBAC --> HasAccess
+  HasAccess -->|No| AccessDeny["⛔ ACCESS DENIED<br/>Insufficient Permissions"]
+  HasAccess -->|Yes| MainMenu["📁 MAIN NAVIGATION"]
+  
+  AccessDeny --> Logout1["🚪 LOGOUT<br/>Session Ended"]
+  
+  MainMenu --> Modules["Modules Based on Role"]
+  
+  subgraph UserMgmt["👤 USER MANAGEMENT"]
+    direction TB
+    UserAdmin["👤 USERS<br/>User List<br/>Create User<br/>Edit User<br/>Delete User<br/>Manage Status"]
+    RoleAdmin["🛡️ ROLES<br/>Role List<br/>Create Role<br/>Edit Permissions<br/>Assign to Users<br/>Delete Role"]
+    GroupAdmin["👥 USER GROUPS<br/>Group List<br/>Create Group<br/>Add Members<br/>Remove Members<br/>Delete Group"]
+    PermAdmin["🔑 PERMISSIONS<br/>Permission List<br/>Module Access<br/>Action Level<br/>Organization Level<br/>Approval Matrix"]
+    
+    UserAdmin --> RoleAdmin
+    RoleAdmin --> GroupAdmin
+    GroupAdmin --> PermAdmin
+  end
+  
+  MainMenu -->|Super Admin| UserMgmt
+  
+  subgraph Modules["📁 FEATURE MODULES"]
+    direction TB
+    CRM["💼 CRM"]
+    Design["🎨 Design"]
+    Events["🎪 Events"]
+    Testing["🧪 Testing"]
+    Training["📖 Training"]
+    Settings["⚙️ Settings"]
+  end
+  
+  MainMenu --> Modules
+  
+  CRM --> CRMModule["Organizations<br/>Contacts<br/>Opportunities<br/>Engagements<br/>Tasks<br/>Activity Log"]
+  Design --> DesignModule["Projects<br/>Designs<br/>Deliverables<br/>Tech Packs<br/>Approvals"]
+  Events --> EventsModule["Events<br/>Registrations<br/>Sponsorship<br/>Attendee Portal<br/>Reports"]
+  Testing --> TestingModule["Orders<br/>Samples<br/>Test Suites<br/>Reports<br/>Certificates"]
+  Training --> TrainingModule["Programs<br/>SOP Library<br/>Sessions<br/>Assessments<br/>Implementation"]
+  Settings --> SettingsModule["System Config<br/>User Prefs<br/>Email Settings<br/>Backup Config<br/>Logs"]
+  
+  CRMModule --> Action["💾 Perform Action<br/>━━━━━━━<br/>Server Action<br/>Permission Check<br/>Database Update<br/>Activity Log<br/>Notification<br/>Real-time Update"]
+  
+  DesignModule --> Action
+  EventsModule --> Action
+  TestingModule --> Action
+  TrainingModule --> Action
+  SettingsModule --> Action
+  
+  UserMgmt -->|Manage Users| UserAction["💾 Update User<br/>━━━━━━━<br/>Modify Roles<br/>Change Permissions<br/>Update Groups<br/>Log Activity"]
+  
+  UserAction --> Logout2["🚪 LOGOUT"]
+  Action --> Logout2
+  
+  Logout1 --> End(["End Session"])
+  Logout2 --> End
+  
+  style Start fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Auth fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style AuthDash fill:#e3f2fd,stroke:#1976d2,stroke-width:1px
+  style Login fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+  style Signup fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+  style Forgot fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+  style TwoFA fill:#bbdefb,stroke:#1976d2,stroke-width:1px
+  style CreateSession fill:#c8e6c9,stroke:#1b5e20,stroke-width:1px
+  style Error1 fill:#ffebee,stroke:#c62828,stroke-width:1px
+  style Error2 fill:#ffebee,stroke:#c62828,stroke-width:1px
+  style Dashboard fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style RBAC fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style RoleCheck fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style ModuleCheck fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style ActionCheck fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style OrgCheck fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style HasAccess fill:#f3e5f5,stroke:#4a148c,stroke-width:1px
+  style AccessDeny fill:#ffebee,stroke:#c62828,stroke-width:2px
+  style MainMenu fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Modules fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style UserMgmt fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style UserAdmin fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style RoleAdmin fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style GroupAdmin fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style PermAdmin fill:#e1bee7,stroke:#4a148c,stroke-width:1px
+  style CRM fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style Design fill:#fce4ec,stroke:#880e4f,stroke-width:1px
+  style Events fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style Testing fill:#e0f2f1,stroke:#004d40,stroke-width:1px
+  style Training fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style Settings fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
+  style Action fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style UserAction fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px

@@ -1,0 +1,43 @@
+{
+	"editor.tabSize": 4,
+	"editor.detectIndentation": true,
+	"search.exclude": {
+		"package-lock.json": true
+	},
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.formatOnSave": true,
+	//   "editor.codeActionsOnSave": [
+	//     "source.addMissingImports",
+	//     "source.fixAll.eslint"
+	//   ],
+	"jest.autoRun": {
+		"watch": false // Start the jest with the watch flag
+		// "onStartup": ["all-tests"] // Run all tests upon project launch
+	},
+	"jest.showCoverageOnLoad": true, // Show code coverage when the project is launched
+	"jest.showTerminalOnLaunch": false, // Don't automatically open test explorer terminal on launch
+	// Multiple language settings for json and jsonc files
+	"[json][jsonc][yaml]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.renderWhitespace": "all",
+	// Insert spaces when pressing Tab. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+	"editor.insertSpaces": false,
+	"editor.wordWrap": "on",
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[scss]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "Wscats.eno"
+	}
+}

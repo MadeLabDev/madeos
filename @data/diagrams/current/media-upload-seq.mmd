@@ -1,0 +1,10 @@
+sequenceDiagram
+  participant C as Client (Uploader)
+  participant S as App Server
+  participant ST as Storage (S3)
+  participant DB as Prisma DB
+
+  C->>S: Upload file (multipart)
+  S->>ST: Store binary
+  S->>DB: Create Media record (url, type, size, visibility)
+  S-->>C: Return Media reference

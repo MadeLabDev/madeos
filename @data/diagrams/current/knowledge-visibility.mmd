@@ -1,0 +1,8 @@
+flowchart TD
+  K[Knowledge Article] --> V{visibility}
+  V -- public --> VIEW[Anyone with access can view]
+  V -- private --> ASSIGN{Assigned?}
+  ASSIGN -- User --> U[KnowledgeAssignedUser]
+  ASSIGN -- Group --> G[KnowledgeAssignedGroup]
+  U & G --> OK[Grant access]
+  OK --> EMAIL[KnowledgeEmailLog]

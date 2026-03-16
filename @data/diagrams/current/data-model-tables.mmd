@@ -1,0 +1,195 @@
+%% Mermaid ER diagram summarizing primary keys and relationship keys
+%% File: @data/diagrams/data-model-tables.mmd
+%% Generated: November 16, 2025
+
+erDiagram
+
+  %% Entities: only primary keys (PK) and foreign keys (FK)
+  USER {
+    String id PK
+  }
+
+  ACCOUNT {
+    String id PK
+    String userId FK
+  }
+
+  SESSION {
+    String id PK
+    String userId FK
+  }
+
+  USER_GROUP {
+    String id PK
+  }
+
+  USER_GROUP_MEMBER {
+    String id PK
+    String userId FK
+    String groupId FK
+  }
+
+  ROLE {
+    String id PK
+  }
+
+  USER_ROLE {
+    String id PK
+    String userId FK
+    String roleId FK
+  }
+
+  MODULE {
+    String id PK
+  }
+
+  PERMISSION {
+    String id PK
+  }
+
+  ROLE_PERMISSION {
+    String id PK
+    String roleId FK
+    String moduleId FK
+    String permissionId FK
+  }
+
+  MEDIA {
+    String id PK
+    String uploadedById FK
+  }
+
+  ACTIVITY_LOG {
+    String id PK
+    String userId FK
+  }
+
+  SETTINGS {
+    String id PK
+  }
+
+  CUSTOMER {
+    String id PK
+    String parentId FK
+  }
+
+  MODULE_TYPE {
+    String id PK
+  }
+
+  MODULE_INSTANCE {
+    String id PK
+    String moduleTypeId FK
+    String entityId
+  }
+
+  EXTERNAL_FORM_DATA {
+    String id PK
+  }
+
+  USER_PROFILE {
+    String id PK
+    String userId FK
+  }
+
+  USER_PROFILE_MODULE {
+    String id PK
+    String profileId FK
+  }
+
+  KNOWLEDGE_CATEGORY {
+    String id PK
+  }
+
+  KNOWLEDGE_TAG {
+    String id PK
+  }
+
+  KNOWLEDGE {
+    String id PK
+  }
+
+  KNOWLEDGE_CATEGORIES_ON_KNOWLEDGE {
+    String knowledgeId PK
+    String categoryId PK
+  }
+
+  KNOWLEDGE_TAGS_ON_KNOWLEDGE {
+    String knowledgeId PK
+    String tagId PK
+  }
+
+  KNOWLEDGE_ASSIGNED_USER {
+    String id PK
+    String knowledgeId FK
+    String userId FK
+  }
+
+  KNOWLEDGE_ASSIGNED_GROUP {
+    String id PK
+    String knowledgeId FK
+    String groupId FK
+  }
+
+  KNOWLEDGE_MODULE_TYPE {
+    String id PK
+  }
+
+  KNOWLEDGE_EMAIL_LOG {
+    String id PK
+    String knowledgeId FK
+    String recipientId FK
+  }
+
+  BACKUP_RECORD {
+    String id PK
+  }
+
+  BACKUP_STATS {
+    String id PK
+  }
+
+  BACKUP_SETTINGS {
+    String id PK
+  }
+
+  %% Relationships (high level)
+  USER ||--o{ ACCOUNT : "has"
+  USER ||--o{ SESSION : "has"
+  USER ||--o{ USER_ROLE : "assigned"
+  USER ||--o{ USER_GROUP_MEMBER : "member_of"
+  USER ||--o{ MEDIA : "uploads"
+  USER ||--o{ ACTIVITY_LOG : "logs"
+  ROLE ||--o{ USER_ROLE : "assigned_to"
+  ROLE ||--o{ ROLE_PERMISSION : "grants"
+  MODULE ||--o{ ROLE_PERMISSION : "for_module"
+  PERMISSION ||--o{ ROLE_PERMISSION : "perm"
+
+  USER_PROFILE ||--o{ USER_PROFILE_MODULE : "contains"
+  USER ||--|| USER_PROFILE : "owns"
+
+  CUSTOMER ||--o{ CUSTOMER : "parent_of" 
+
+  KNOWLEDGE ||--o{ KNOWLEDGE_CATEGORIES_ON_KNOWLEDGE : "categorized"
+  KNOWLEDGE ||--o{ KNOWLEDGE_TAGS_ON_KNOWLEDGE : "tagged"
+  KNOWLEDGE ||--o{ KNOWLEDGE_ASSIGNED_USER : "assigned_to_user"
+  KNOWLEDGE ||--o{ KNOWLEDGE_ASSIGNED_GROUP : "assigned_to_group"
+  USER ||--o{ KNOWLEDGE_ASSIGNED_USER : "granted_access"
+  USER_GROUP ||--o{ KNOWLEDGE_ASSIGNED_GROUP : "granted_access"
+
+  %% Composite/junction relationships
+  KNOWLEDGE ||--o{ KNOWLEDGE_CATEGORIES_ON_KNOWLEDGE : "has"
+  KNOWLEDGE_CATEGORY ||--o{ KNOWLEDGE_CATEGORIES_ON_KNOWLEDGE : "has"
+  KNOWLEDGE ||--o{ KNOWLEDGE_TAGS_ON_KNOWLEDGE : "has"
+  KNOWLEDGE_TAG ||--o{ KNOWLEDGE_TAGS_ON_KNOWLEDGE : "has"
+
+  %% Role permission mapping
+  ROLE ||--o{ ROLE_PERMISSION : "has"
+  PERMISSION ||--o{ ROLE_PERMISSION : "used_by"
+  MODULE ||--o{ ROLE_PERMISSION : "scoped"
+
+  %% End
+
+%% Notes:
+%% - Each entity lists only PK and FK fields (and a few identifying keys like entityId where applicable).
+%% - For composite/junction tables the PK lines reflect the composite keys defined in the Prisma schema.

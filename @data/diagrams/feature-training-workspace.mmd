@@ -1,0 +1,87 @@
+flowchart TD
+  Start([User Access Training Workspace])
+  
+  Start --> Check{"Has Training<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return"])
+  
+  Check -->|Yes| Dashboard["📖 TRAINING DASHBOARD<br/>━━━━━━━━<br/>Active Programs<br/>Upcoming Sessions<br/>Completion Rates<br/>Assessment Results"]
+  
+  Dashboard --> Menu["📁 TRAINING MODULES"]
+  
+  Menu --> Programs["🎓 PROGRAMS<br/>━━━━━━━━<br/>Program Creation<br/>Type Selection<br/>Objectives<br/>Timeline"]
+  
+  Menu --> SOPLibrary["📚 SOP LIBRARY<br/>━━━━━━━━<br/>SOP Management<br/>Version Control<br/>Organization Sharing<br/>Search & Filter"]
+  
+  Menu --> Sessions["👨‍🏫 SESSIONS<br/>━━━━━━━━<br/>Session Scheduling<br/>Facilitator Assignment<br/>Material Distribution<br/>Attendance"]
+  
+  Menu --> Assessment["✍️ ASSESSMENTS<br/>━━━━━━━━<br/>Assessment Creation<br/>Knowledge Checks<br/>Competency Tests<br/>Scoring"]
+  
+  Menu --> Implementation["📋 IMPLEMENTATION<br/>━━━━━━━━<br/>Action Plan<br/>Success Metrics<br/>Follow-up Tasks<br/>Progress Tracking"]
+  
+  Menu --> Portal["🏢 PARTICIPANT PORTAL<br/>━━━━━━━━<br/>Materials Access<br/>Session Schedule<br/>Assessments<br/>Certificate"]
+  
+  Programs --> ProgramActions["➕ Create Program<br/>✏️ Edit Details<br/>🎯 Set Objectives<br/>👥 Assign Participants<br/>📅 Set Timeline<br/>📚 Select SOPs<br/>🔗 Link to Engagement"]
+  
+  SOPLibrary --> SOPActions["➕ Create SOP<br/>📝 Write Content<br/>📎 Upload Files<br/>🔄 Version Control<br/>🏷️ Tag & Categorize<br/>👥 Share with Org<br/>🔍 Search & Filter"]
+  
+  Sessions --> SessionActions["📅 Create Session<br/>👨‍🏫 Assign Facilitator<br/>📝 Add Description<br/>📎 Attach Materials<br/>📧 Send Invites<br/>✅ Mark Attended<br/>📊 Attendance Report"]
+  
+  Assessment --> AssessActions["✏️ Create Assessment<br/>❓ Add Questions<br/>⚙️ Set Scoring<br/>🎯 Define Passing Score<br/>📊 View Results<br/>✅ Mark Complete<br/>🎓 Issue Certificate"]
+  
+  Implementation --> ImplActions["📋 Create Plan<br/>📝 Define Actions<br/>🎯 Set Metrics<br/>👥 Assign Owners<br/>📅 Set Dates<br/>📊 Track Progress<br/>🔄 Update Status"]
+  
+  Portal --> PortalActions["📚 Access Materials<br/>👁️ View Schedule<br/>✍️ Take Assessment<br/>📊 View Results<br/>🎓 Download Certificate<br/>💬 Contact Support<br/>⭐ Provide Feedback"]
+  
+  ProgramActions --> Workflow{{"Program Stage?"}}
+  SOPActions --> Workflow
+  SessionActions --> Workflow
+  AssessActions --> Workflow
+  ImplActions --> Workflow
+  PortalActions --> Workflow
+  
+  Workflow -->|Discovery| Step1["1️⃣ DISCOVERY<br/>━━━━<br/>Intake Form<br/>Assess Needs<br/>Define Objectives"]
+  Workflow -->|Preparation| Step2["2️⃣ PREPARATION<br/>━━━━<br/>Select SOPs<br/>Create Workbooks<br/>Prepare Materials"]
+  Workflow -->|Delivery| Step3["3️⃣ DELIVERY<br/>━━━━<br/>Schedule Sessions<br/>Deliver Content<br/>Track Attendance"]
+  Workflow -->|Assessment| Step4["4️⃣ ASSESSMENT<br/>━━━━<br/>Knowledge Check<br/>Competency Test<br/>Issue Certificate"]
+  Workflow -->|Implementation| Step5["5️⃣ IMPLEMENTATION<br/>━━━━<br/>Action Plan<br/>Track Progress<br/>Support Adoption"]
+  Workflow -->|Follow-up| Step6["6️⃣ FOLLOW-UP<br/>━━━━<br/>Evaluate Results<br/>Measure Impact<br/>Success Report"]
+  
+  Step1 --> Step2
+  Step2 --> Step3
+  Step3 --> Step4
+  Step4 --> Step5
+  Step5 --> Step6
+  
+  Step6 --> Export["📊 EXPORT & REPORT<br/>━━━━<br/>Results Summary<br/>Certificates<br/>Impact Analysis"]
+  
+  Export --> Complete["✅ COMPLETE<br/>━━━━<br/>Archive Program<br/>Update Status<br/>Log Activity"]
+  
+  Complete --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Dashboard fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Menu fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Programs fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style SOPLibrary fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style Sessions fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style Assessment fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style Implementation fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style Portal fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style ProgramActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style SOPActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style SessionActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style AssessActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style ImplActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style PortalActions fill:#a5d6a7,stroke:#1b5e20,stroke-width:1px
+  style Workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style Step1 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step2 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step3 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step4 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step5 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step6 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Export fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Complete fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

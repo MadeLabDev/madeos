@@ -1,0 +1,18 @@
+flowchart LR
+  PROFILE[My Profile] --> BUILDER[Open Builder]
+  BUILDER --> ADD_MOD[Add Module]
+  BUILDER --> DRAG[Drag Drop]
+  BUILDER --> TOGGLE[Show Hide]
+  BUILDER --> ORDER[Change Order]
+  BUILDER --> SAVE[Save]
+  BUILDER --> PUBLISH[Publish Public Slug]
+
+  subgraph Data
+    UP[UserProfile] --> UPM[UserProfileModule]
+    MT[ModuleType] --> MI[ModuleInstance]
+    MI --> UPM
+  end
+
+  SAVE --> UP
+  ADD_MOD --> UPM
+  PUBLISH --> UP

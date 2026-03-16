@@ -1,0 +1,143 @@
+MADE (OS) — Product Specification v1.0
+1. Product Overview
+Name
+MADE (OS)
+Company
+MADE Laboratory
+Type
+Internal web application (“operating system”) with integrated CRM and public-facing portal features.
+Vision
+Create a unified, visually consistent operating system that centralizes all MADE Laboratory workflows across all business verticals.
+	•	Eliminate app fragmentation and simplify team workflows.
+	•	Enable seamless communication and collaboration with customers, partners, sponsors, and attendees.
+	•	Provide a foundation that scales with future business units and service offerings.
+Primary Goals
+	•	Replace numerous disconnected tools with one unified hub.
+	•	Establish shared concepts across verticals (Customers, Contacts, Projects, Events, Training, Testing).
+	•	Streamline the creation, organization, versioning, and delivery of outputs (design assets, reports, SOPs, decks).
+	•	Improve internal collaboration and external communication.
+	•	Maintain a built-in CRM for managing customer relationships, sales pipelines, and sponsorships.
+
+2. Users & Roles
+2.1 Internal Roles
+Super Admin
+	•	Full system access
+	•	Manages permissions and configuration
+	•	Handles integrations and global settings
+Ops Admin
+	•	Manages templates, catalogs, testing protocols, SOPs
+	•	Manages service offerings and pricing
+	•	Oversees workflow configurations
+Vertical Lead
+	•	One per vertical (Design, Events, Testing, Training)
+	•	Oversees pipelines and engagements
+	•	Sets up projects, orders, and events
+	•	Approves key milestones
+Team Member
+	•	Executes day-to-day work
+	•	Uploads deliverables and updates
+	•	Logs activity and tasks
+	•	Collaborates with internal team and customers
+Finance / RevOps
+	•	Manages invoicing and payment status
+	•	Reviews revenue, margins, and basic P&L per engagement
+	•	Handles reconciliation
+Marketing
+	•	Manages event microsite content
+	•	Sends communications and campaigns
+	•	Manages sponsor-related materials
+
+2.2 External Roles (Public-Facing)
+Customer (Organization)
+	•	Views active and past engagements
+	•	Reviews and approves deliverables
+	•	Submits new requests
+	•	Views invoices and payment statuses
+Event Attendee
+	•	Registers and manages tickets
+	•	Accesses event materials, schedules, and virtual content
+Sponsor / Partner
+	•	Manages sponsorship deliverables
+	•	Uploads assets
+	•	Views requirements and approvals
+
+3. Core Domains & Modules
+MADE (OS) consists of shared platform modules, CRM functionality, and vertical-specific workspaces.
+
+3.1 Shared Platform Modules
+3.1.1 Accounts & Authentication
+	•	Single login for internal users
+	•	Public login for customers and attendees
+	•	Role-based access control
+
+3.1.2 CRM (Customer Relationship Management)
+	•	CRM Core ObjectsOrganizationsContactsOpportunitiesEngagementsInteractionsTasksFilesActivity Timeline
+Organizations • Customer profile • Industry, location, website • Relationship stage • Linked contacts • Engagement history • Financial overview (payments, invoices) • Activity logs
+Contacts • Contact roles (primary, billing, technical, etc.) • Tags (VIP, Sponsor, Technical Lead) • Interaction history • Related engagements, events, and tickets
+Opportunities • Supports multiple pipelines: – Design Services – Testing Services – Training & Consulting – Events & Sponsorships • Opportunity metadata: – Value – Stage – Owner – Close probability and date – Linked documents and tasks • Converting an opportunity creates a new engagement
+Interactions & Notes • Meetings, calls, notes • Deliverable approvals • System-triggered events
+CRM Tasks • Follow-up reminders • Customer action tracking • Renewal reminders • Linked to opportunities, organizations, contacts, or engagements
+
+3.1.3 Organizations & Contacts
+• Shared repository across all verticals and workflows • Consolidated into CRM
+
+3.1.4 Projects & Engagements
+• Unified engagement object for all services: – Design Project – Test Order – Training Engagement – Consulting Engagement – Event Production
+• Engagement fields include: – Customer – Status & stage – Timeline & due dates – Linked opportunity – Assigned team – Deliverables – Approvals – Financial status – Activity logs
+
+3.1.5 Tasks & Workflows
+• Task assignment and ownership • Kanban, table, and calendar views • Workflow templates per vertical • Automated stage progression
+
+3.1.6 Assets & Files
+• Centralized file library for: – Brand kits – Design files – Testing reports – SOPs and training outputs • Versioning for key deliverables • Customer-facing sharing and downloads
+
+3.1.7 Notifications & Activity Feed
+• In-app notifications • Email notifications for external users • Activity feeds at the level of: – Engagement – Contact – Organization – Opportunity
+
+3.1.8 Billing & Financials (Light)
+• Integrates with Stripe / QuickBooks • Tracks invoices and payment statuses • Financial summaries per engagement and customer • Revenue roll-ups per vertical
+
+4. Vertical Workspaces (v1 Scope)
+Each workspace depends on shared CRM data but introduces unique workflows.
+
+4.1 Design x Development Workspace
+Key Objects • Design Project • Design Deck • Product Design • Mockups • Graphic Specs • Separation Files • Output Files (DTG/DTF/Transfer) • Embroidery Files • Engineering Specifications • Tech Packs • Optional product configurator
+Core Workflows
+Intake • Create project from CRM opportunity • Intake form (brand assets, goals, constraints)
+Concepting • Upload assets • Select blank products • Add decoration details • Run compatibility logic
+Feasibility / Engineering • Validate product compatibility • Status: Draft → Feasibility → Approved
+Deliverables • Design deck • Tech Packs • Asset files • Versioning • Customer approvals
+
+4.2 Events x Education Workspace
+Key Objects • Event • Sessions • Ticket Types • Registrations • Sponsors • Presenters / Contractors
+Core Workflows
+Event Setup • Event details, pricing, ticketing
+Event Microsite • Public-facing marketing page • Speakers • Agenda • Ticketing
+Registration & Attendees • Registration tracking • Check-in • Automated confirmation emails
+Sponsorship • Sponsor packages • Sponsor deliverables • Asset uploads
+Contractor / Presenter Management • Agreements • Payments • Session assignment
+Attendee Portal • Materials • Schedules • Replays • Certificates
+
+4.3 Testing x Development Workspace
+Key Objects • Test Order • Samples • Test Suites • Individual Tests • Test Reports
+Core Workflows • Create test order • Track samples • Conduct structured testing • Capture measured data • Generate standardized reports • Publish to customer portal
+
+4.4 Training x Support Workspace
+Key Objects • Training Engagement • SOP Library • Training Sessions • Assessments • Implementation Plans
+Core Workflows • Engagement setup • Discovery data capture • Training execution • Attendance tracking • SOP coverage tracking • Reporting • Follow-up implementation actions
+
+5. Public-Facing Features (v1)
+5.1 Customer Portal
+• View all engagements • Download assets and reports • Approve deliverables • Submit requests • View invoices • Upload files
+5.2 Event Microsites & Attendee Portal
+• Event landing pages • Ticketing • Schedule • Materials • Replays • Sponsor logos
+
+6. Non-Functional Requirements
+• Web-based, responsive • Desktop-first for internal users • Tablet/mobile friendly externally • Role and organization-level permissions • Unified design system • PDF/CSV exportability • Audit trails for key actions
+
+7. Design & UX Principles
+• Consistent visual and interaction patterns • Clean, minimalist UI • Dashboard-first navigation • Contextual metadata on every engagement • A cohesive “single operating system” feel
+
+
+
+

@@ -1,0 +1,5 @@
+flowchart TD
+  EXT[External Site Form] -->|POST submit| API[Form submit API];
+  API --> SAVE[(ExternalFormData)];
+  READ[Portal/Backoffice] -->|GET retrieve?key=...| API2[Form retrieve API];
+  API2 --> VIEW[Render entries];

@@ -1,0 +1,20 @@
+flowchart TD
+  LIB[Media Library] --> UPLOAD[Upload Files]
+  LIB --> FILTER[Filter by Type Visibility Uploader]
+  LIB --> VIEW_ITEM[View Item]
+  VIEW_ITEM --> SET_VIS[Set Visibility]
+  VIEW_ITEM --> LINK[Link to Entity]
+  VIEW_ITEM --> DELETE[Delete]
+
+  subgraph Data
+    M[Media] --> URL[URL]
+    M --> TYPE[Type]
+    M --> SIZE[Size]
+    M --> VIS[Visibility]
+    M --> OWNER[Uploaded By]
+  end
+
+  UPLOAD --> M
+  SET_VIS --> VIS
+  LINK --> M
+  DELETE --> M

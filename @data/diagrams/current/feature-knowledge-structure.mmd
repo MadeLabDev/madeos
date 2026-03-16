@@ -1,0 +1,19 @@
+flowchart LR
+  K[Knowledge Article] --> CATS[Categories]
+  K --> TAGS[Tags]
+  K --> ASSU[Assigned Users]
+  K --> ASSG[Assigned Groups]
+  K --> LOGS[Email Logs]
+
+  subgraph Relations
+    K <--> KC[KnowledgeCategoriesOnKnowledge]
+    K <--> KT[KnowledgeTagsOnKnowledge]
+    K <--> KAUR[KnowledgeAssignedUser]
+    K <--> KAGR[KnowledgeAssignedGroup]
+  end
+
+  CATS --> KC
+  TAGS --> KT
+  ASSU --> KAUR
+  ASSG --> KAGR
+  LOGS --> K

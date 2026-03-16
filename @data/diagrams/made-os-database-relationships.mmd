@@ -1,0 +1,159 @@
+---
+config:
+  layout: elk
+  look: handDrawn
+  theme: base
+---
+graph TB
+  subgraph AUTH["Authentication Layer"]
+    User["👤 User<br/>email, password<br/>2FA, isActive<br/>emailVerified"]
+    Account["Account<br/>OAuth providers<br/>Google"]
+    Session["Session<br/>sessionToken<br/>expires"]
+    
+    User -->|oauth| Account
+    User -->|sessions| Session
+  end
+
+  subgraph RBAC["RBAC System"]
+    Role["Role<br/>Super Admin, Ops Admin<br/>Vertical Lead<br/>Team Member, Finance"]
+    Module["Module<br/>CRM, Design<br/>Events, Testing<br/>Training"]
+    Permission["Permission<br/>create, read<br/>update, delete<br/>approve"]
+    UserRole["UserRole<br/>junction<br/>user to role"]
+    RolePermission["RolePermission<br/>role to module<br/>to permission"]
+    
+    User -->|assigned to| UserRole
+    UserRole -->|contains| Role
+    Role -->|grants| RolePermission
+    Module -->|scoped to| RolePermission
+    Permission -->|defines| RolePermission
+  end
+
+  subgraph GROUPS["User & Organization Groups"]
+    UserGroup["UserGroup<br/>name, description<br/>created metadata"]
+    UserGroupMember["UserGroupMember<br/>junction<br/>user to group"]
+    Organization["Organization<br/>name, industry<br/>website, contact<br/>parent_id for hierarchy"]
+    
+    User -->|joins| UserGroupMember
+    UserGroup -->|contains| UserGroupMember
+  end
+
+  AUTH -->|authenticated users| CRM
+
+  subgraph CRM["💼 CRM Core"]
+    direction TB
+    Org2["Organization<br/>parent/subsidiary<br/>structure"]
+    Contact["Contact<br/>firstName, lastName<br/>email, phone, title<br/>role, tags"]
+    Opportunity["Opportunity<br/>type: Design/Test<br/>Training/Event<br/>value, stage<br/>probability, owner"]
+    Engagement["Engagement<br/>UNIFIED OBJECT<br/>engagementType<br/>status, budget<br/>actualCost, team<br/>startDate, endDate"]
+    
+    Org2 -->|has many| Contact
+    Org2 -->|has many| Opportunity
+    Contact -->|involved in| Opportunity
+    Opportunity -->|converts 1:1| Engagement
+    Org2 -->|has many| Engagement
+  end
+
+  subgraph SHARED["🔗 Shared Platform"]
+    Task["Task<br/>title, description<br/>status, priority<br/>assignee, dueDate"]
+    Media["Media<br/>fileName, fileUrl<br/>fileSize, visibility<br/>uploadedBy"]
+    Interaction["Interaction<br/>type: Meeting/Call<br/>Email/Note<br/>participants, date"]
+    ActivityLog["ActivityLog<br/>userId, action<br/>entityType, entityId<br/>changes JSON"]
+    Notification["Notification<br/>type, message<br/>link, read status"]
+    
+    Engagement -->|creates many| Task
+    Engagement -->|produces| Media
+    Contact -->|participates| Interaction
+    User -->|performs| ActivityLog
+    User -->|receives| Notification
+  end
+
+  subgraph DESIGN["🎨 Design Workspace"]
+    DesignProject["Design Project<br/>engagementId<br/>status, assetLibraryUrl"]
+    DesignDeck["Design Deck<br/>name, products<br/>decoration type<br/>fileUrl, version"]
+    ProductDesign["Product Design<br/>productName, SKU<br/>mockupUrl<br/>graphicSpecUrl"]
+    SeparationFile["Separation File<br/>fileFormat: AI/PDF<br/>colorSpace, fileUrl"]
+    OutputFile["Output File<br/>fileType: DTG/DTF<br/>Transfer/Embroidery<br/>fileName, version"]
+    TechPack["Tech Pack<br/>fileName, content<br/>fileUrl, version"]
+    
+    Engagement -->|type: Design| DesignProject
+    DesignProject -->|contains| DesignDeck
+    DesignProject -->|has many| ProductDesign
+    DesignProject -->|produces| SeparationFile
+    DesignProject -->|generates| OutputFile
+    DesignProject -->|includes| TechPack
+  end
+
+  subgraph EVENTS["🎪 Events Workspace"]
+    Event["Event<br/>eventName, eventType<br/>eventDate, venue<br/>microSiteUrl, status"]
+    EventSession["Event Session<br/>sessionName, presenter<br/>startTime, endTime<br/>location"]
+    TicketType["Ticket Type<br/>name: Early Bird<br/>Regular, VIP<br/>price, quantity"]
+    Registration["Registration<br/>contactId, ticketTypeId<br/>status, paymentStatus<br/>registeredAt"]
+    EventSponsor["Event Sponsor<br/>sponsorshipLevel<br/>amount, deliverables<br/>organizationId"]
+    Contractor["Contractor<br/>name, email, role<br/>paymentAmount<br/>paymentStatus"]
+    
+    Engagement -->|type: Event| Event
+    Event -->|has many| EventSession
+    Event -->|offers| TicketType
+    Event -->|receives| Registration
+    Contact -->|registers via| Registration
+    TicketType -->|linked to| Registration
+    Event -->|has sponsors| EventSponsor
+    Organization -->|can be| EventSponsor
+    Event -->|hires| Contractor
+  end
+
+  subgraph TESTING["🧪 Testing Workspace"]
+    TestOrder["Test Order<br/>orderNumber, testType<br/>status, reportUrl<br/>engagementId"]
+    Sample["Sample<br/>sampleIdentifier<br/>sampleType<br/>receivedCondition<br/>storageLocation"]
+    TestSuite["Test Suite<br/>suiteName, standard<br/>ISO/ASTM/EN<br/>tests JSON"]
+    IndividualTest["Individual Test<br/>testName, testMethod<br/>expectedResult<br/>status"]
+    TestResult["Test Result<br/>measurement, unit<br/>status: Pass/Fail<br/>testedAt"]
+    TestReport["Test Report<br/>reportContent<br/>reportUrl<br/>certificationType"]
+    
+    Engagement -->|type: Testing| TestOrder
+    TestOrder -->|receives| Sample
+    TestOrder -->|defines| TestSuite
+    TestOrder -->|generates| TestReport
+    TestSuite -->|contains| IndividualTest
+    IndividualTest -->|produces| TestResult
+    Sample -->|tested via| TestResult
+  end
+
+  subgraph TRAINING["📖 Training Workspace"]
+    TrainingEng["Training Engagement<br/>trainingType<br/>status, sopLibraryIds<br/>engagementId"]
+    SOPLibrary["SOP Library<br/>sopName, sopDescription<br/>content, version<br/>organizationId"]
+    TrainingSession["Training Session<br/>sessionName, sessionType<br/>startDate, endDate<br/>facilitator, materials"]
+    Assessment["Assessment<br/>assessmentType<br/>assessmentContent<br/>resultUrl, status"]
+    ImplementationPlan["Implementation Plan<br/>planContent<br/>actionItems, metrics<br/>successMetrics"]
+    
+    Engagement -->|type: Training| TrainingEng
+    TrainingEng -->|uses| SOPLibrary
+    TrainingEng -->|includes| TrainingSession
+    TrainingEng -->|contains| Assessment
+    TrainingEng -->|creates| ImplementationPlan
+    Organization -->|owns| SOPLibrary
+  end
+
+  subgraph FINANCIAL["💳 Financial"]
+    Invoice["Invoice<br/>invoiceNumber, amount<br/>status, issueDate<br/>dueDate, lineItems<br/>qbSyncId"]
+    Payment["Payment<br/>paymentMethod<br/>amount, status<br/>transactionId<br/>paymentDate"]
+    
+    Engagement -->|generates| Invoice
+    Invoice -->|receives| Payment
+  end
+
+  subgraph LOGS["📊 Logs & Settings"]
+    Settings["Settings<br/>key-value pairs<br/>system config<br/>settingType"]
+  end
+
+  style AUTH fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+  style RBAC fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style GROUPS fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+  style CRM fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  style SHARED fill:#f0f4c3,stroke:#557a00,stroke-width:2px
+  style DESIGN fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style EVENTS fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style TESTING fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style TRAINING fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style FINANCIAL fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style LOGS fill:#fff9c4,stroke:#f57f17,stroke-width:2px

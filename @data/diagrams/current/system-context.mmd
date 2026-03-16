@@ -1,0 +1,37 @@
+flowchart LR
+  subgraph Users
+    A1[Super Admin]
+    A2[Ops Admin]
+    A3[Vertical Lead]
+    A4[Team Member]
+    A5[Finance/RevOps]
+    A6[Marketing]
+    B1[Customer]
+    B2[Sponsor/Partner]
+    B3[Event Attendee]
+  end
+
+  subgraph App[MADE OS - Next.js 16 App Router]
+    S1[Server Actions + RBAC]
+    S2[Feature Modules]
+    S3[Dynamic Forms - ModuleType/Instance]
+    S4[Lexical Editor]
+    S5[Notifications]
+  end
+
+  subgraph Services
+    DB[(MySQL via Prisma)]
+    AUTH[NextAuth v5 - JWT + Google OAuth]
+    STORAGE[S3 / Spaces]
+    EMAIL[SMTP via React Email]
+    RT[Pusher]
+  end
+
+  A1 & A2 & A3 & A4 & A5 & A6 --> App
+  B1 & B2 & B3 --> App
+
+  App --> DB
+  App --> AUTH
+  App --> STORAGE
+  App --> EMAIL
+  App --> RT

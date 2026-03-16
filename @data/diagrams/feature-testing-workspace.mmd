@@ -1,0 +1,87 @@
+flowchart TD
+  Start([User Access Testing Workspace])
+  
+  Start --> Check{"Has Testing<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return"])
+  
+  Check -->|Yes| Dashboard["🧪 TESTING DASHBOARD<br/>━━━━━━━━<br/>Active Orders<br/>Samples In-transit<br/>Tests In Progress<br/>Reports Ready"]
+  
+  Dashboard --> Menu["📁 TESTING MODULES"]
+  
+  Menu --> Orders["📋 TEST ORDERS<br/>━━━━━━━━<br/>Order Creation<br/>Order Tracking<br/>Status Management<br/>Budget"]
+  
+  Menu --> Samples["📦 SAMPLES<br/>━━━━━━━━<br/>Sample Receipt<br/>Condition Check<br/>Storage Management<br/>Tracking"]
+  
+  Menu --> Suites["🧬 TEST SUITES<br/>━━━━━━━━<br/>Protocol Selection<br/>Standard Compliance<br/>Test Definition<br/>Customization"]
+  
+  Menu --> Execution["⚗️ EXECUTION<br/>━━━━━━━━<br/>Test Assignment<br/>Data Capture<br/>Result Recording<br/>Quality Check"]
+  
+  Menu --> Reports["📊 REPORTS<br/>━━━━━━━━<br/>Report Generation<br/>Certification<br/>Export Formats<br/>Customer Portal"]
+  
+  Menu --> Portal["🏢 CUSTOMER PORTAL<br/>━━━━━━━━<br/>Report Access<br/>Download Docs<br/>Certification<br/>History"]
+  
+  Orders --> OrderActions["➕ Create Order<br/>✏️ Edit Details<br/>📅 Set Timeline<br/>💰 Set Budget<br/>🎯 Set Scope<br/>📌 Assign Owner<br/>🔗 Link to Engagement"]
+  
+  Samples --> SampleActions["📦 Log Receipt<br/>📸 Document Condition<br/>🏪 Assign Storage<br/>📍 Track Location<br/>🏷️ Label Sample<br/>📊 Sample List<br/>⚠️ Alert on Issues"]
+  
+  Suites --> SuiteActions["🧬 Select Standard<br/>✏️ Create Custom Suite<br/>📋 Add Tests<br/>🔗 Link Protocol<br/>📝 Define Methods<br/>✅ Approve Suite<br/>🔄 Version Control"]
+  
+  Execution --> ExecActions["📝 Create Test Plan<br/>⚗️ Start Testing<br/>📊 Log Data<br/>📸 Capture Images<br/>✅ Mark Complete<br/>🔍 Quality Review<br/>💬 Add Notes"]
+  
+  Reports --> ReportActions["📊 Generate Report<br/>📋 Add Analysis<br/>✅ Add Certification<br/>📥 Export PDF<br/>🌐 Export HTML<br/>✍️ Digital Signature<br/>📤 Send to Customer"]
+  
+  Portal --> PortalActions["📥 Access Reports<br/>📥 Download Files<br/>🎓 View Certification<br/>📊 View Test Data<br/>🔐 Verify Results<br/>💬 Submit Questions<br/>📧 Request Retest"]
+  
+  OrderActions --> Workflow{{"Test Stage?"}}
+  SampleActions --> Workflow
+  SuiteActions --> Workflow
+  ExecActions --> Workflow
+  ReportActions --> Workflow
+  PortalActions --> Workflow
+  
+  Workflow -->|Setup| Step1["1️⃣ SETUP<br/>━━━━<br/>Create Order<br/>Define Scope<br/>Select Standards"]
+  Workflow -->|Samples| Step2["2️⃣ SAMPLES<br/>━━━━<br/>Receive Samples<br/>Document Condition<br/>Store & Track"]
+  Workflow -->|Suite| Step3["3️⃣ SUITE<br/>━━━━<br/>Select/Create<br/>Define Methods<br/>Prepare Equipment"]
+  Workflow -->|Execution| Step4["4️⃣ EXECUTION<br/>━━━━<br/>Conduct Tests<br/>Capture Data<br/>Quality Check"]
+  Workflow -->|Report| Step5["5️⃣ REPORT<br/>━━━━<br/>Analyze Results<br/>Generate Report<br/>Add Certification"]
+  Workflow -->|Delivery| Step6["6️⃣ DELIVERY<br/>━━━━<br/>Customer Portal<br/>Digital Access<br/>Archive"]
+  
+  Step1 --> Step2
+  Step2 --> Step3
+  Step3 --> Step4
+  Step4 --> Step5
+  Step5 --> Step6
+  
+  Step6 --> Export["📤 EXPORT & ARCHIVE<br/>━━━━<br/>Final Report<br/>All Data Files<br/>Certification"]
+  
+  Export --> Complete["✅ COMPLETE<br/>━━━━<br/>Archive Order<br/>Update Status<br/>Log Activity"]
+  
+  Complete --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style Dashboard fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style Menu fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style Orders fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style Samples fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style Suites fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style Execution fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style Reports fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style Portal fill:#b2dfdb,stroke:#004d40,stroke-width:2px
+  style OrderActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style SampleActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style SuiteActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style ExecActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style ReportActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style PortalActions fill:#80cbc4,stroke:#004d40,stroke-width:1px
+  style Workflow fill:#fff3e0,stroke:#e65100,stroke-width:2px
+  style Step1 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step2 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step3 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step4 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step5 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step6 fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Export fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Complete fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

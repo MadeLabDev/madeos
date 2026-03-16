@@ -1,0 +1,24 @@
+flowchart TD
+  ROLES[Roles] --> VIEW_ROLE[View Role]
+  ROLES --> CREATE_ROLE[Create Role]
+  VIEW_ROLE --> ATTACH_PERM[Attach Permissions]
+  VIEW_ROLE --> REMOVE_PERM[Remove Permission]
+  VIEW_ROLE --> ASSIGN_USERS[Assign Users]
+
+  subgraph Model
+    R[Role] --> RP[RolePermission]
+    M[Module] --> RP
+    P[Permission] --> RP
+    U[User] --> UR[UserRole]
+    R --> UR
+  end
+
+  ATTACH_PERM --> RP
+  REMOVE_PERM --> RP
+  ASSIGN_USERS --> UR
+
+  subgraph Runtime
+    CALL[Server Action] --> CHECK{checkPermission}
+    CHECK -->|allowed| OK[Proceed]
+    CHECK -->|denied| DENY[Access Denied]
+  end

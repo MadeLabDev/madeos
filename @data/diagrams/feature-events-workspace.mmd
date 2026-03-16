@@ -1,0 +1,94 @@
+flowchart TD
+  Start([User Access Events Workspace])
+  
+  Start --> Check{"Has Events<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return"])
+  
+  Check -->|Yes| Dashboard["🎪 EVENTS DASHBOARD<br/>━━━━━━━━<br/>Upcoming Events<br/>Registrations<br/>Sponsor Status<br/>Attendance Stats"]
+  
+  Dashboard --> Menu["📁 EVENTS MODULES"]
+  
+  Menu --> Setup["⚙️ EVENT SETUP<br/>━━━━━━━━<br/>Event Creation<br/>Details & Venue<br/>Timeline<br/>Budget"]
+  
+  Menu --> Microsite["🌐 MICROSITE<br/>━━━━━━━━<br/>Website Builder<br/>Agenda & Sessions<br/>Speaker Profiles<br/>SEO/Analytics"]
+  
+  Menu --> Ticketing["🎟️ TICKETING<br/>━━━━━━━━<br/>Ticket Types<br/>Pricing<br/>Inventory<br/>Sales Tracking"]
+  
+  Menu --> Registration["📝 REGISTRATION<br/>━━━━━━━━<br/>Attendee Sign-up<br/>Payment Processing<br/>Confirmations<br/>Dashboard"]
+  
+  Menu --> Sponsorship["👥 SPONSORSHIP<br/>━━━━━━━━<br/>Sponsor Packages<br/>Deliverables<br/>Asset Management<br/>Fulfillment"]
+  
+  Menu --> Contractors["💼 CONTRACTORS<br/>━━━━━━━━<br/>Speaker Management<br/>Session Assignment<br/>Payment Tracking<br/>Agreements"]
+  
+  Menu --> Portal["🏢 ATTENDEE PORTAL<br/>━━━━━━━━<br/>Schedule View<br/>Material Download<br/>Video Replays<br/>Certificate"]
+  
+  Setup --> SetupActions["➕ Create Event<br/>✏️ Edit Details<br/>📅 Set Dates<br/>📍 Add Venue<br/>💰 Set Budget<br/>📌 Add Organizer<br/>🔗 Link to Engagement"]
+  
+  Microsite --> SiteActions["🌐 Create Website<br/>📝 Add Agenda<br/>👤 Add Speakers<br/>🎬 Add Videos<br/>🎨 Customize Design<br/>📊 View Analytics<br/>📤 Publish"]
+  
+  Ticketing --> TicketActions["🎟️ Create Ticket Type<br/>💰 Set Pricing<br/>📊 Set Quantity<br/>🏷️ Early Bird Discount<br/>📈 Track Sales<br/>❌ Close Ticket<br/>📊 View Report"]
+  
+  Registration --> RegActions["✅ Enable Registration<br/>💳 Setup Payment<br/>📧 Confirmation Email<br/>📋 Attendee List<br/>✏️ Manage Registrations<br/>❌ Cancel Registration<br/>📊 Attendance Report"]
+  
+  Sponsorship --> SponsorActions["💰 Create Package<br/>📋 Define Deliverables<br/>✅ Track Fulfillment<br/>📤 Asset Upload<br/>🤝 Sponsor Portal<br/>✉️ Send Confirmation<br/>💵 Process Payment"]
+  
+  Contractors --> ContractActions["👤 Add Contractor<br/>📅 Assign Sessions<br/>✉️ Send Agreement<br/>💰 Track Payment<br/>✅ Confirm Status<br/>🎬 Link to Video<br/>📊 Performance Review"]
+  
+  Portal --> PortalActions["📅 View Schedule<br/>📥 Download Materials<br/>🎬 Watch Replays<br/>🎓 Get Certificate<br/>💬 Access Chat<br/>📧 Email Support<br/>⭐ Rate Event"]
+  
+  SetupActions --> Workflow{{"Event Stage?"}}
+  SiteActions --> Workflow
+  TicketActions --> Workflow
+  RegActions --> Workflow
+  SponsorActions --> Workflow
+  ContractActions --> Workflow
+  PortalActions --> Workflow
+  
+  Workflow -->|Planning| Step1["1️⃣ PLANNING<br/>━━━━<br/>Create Event<br/>Define Scope<br/>Budget Setup"]
+  Workflow -->|Setup| Step2["2️⃣ SETUP<br/>━━━━<br/>Microsite<br/>Ticketing<br/>Payment"]
+  Workflow -->|Marketing| Step3["3️⃣ MARKETING<br/>━━━━<br/>Sponsor Outreach<br/>Speaker Recruitment<br/>SEO Launch"]
+  Workflow -->|Registration| Step4["4️⃣ REGISTRATION<br/>━━━━<br/>Attendee Sign-up<br/>Payment Process<br/>Confirmations"]
+  Workflow -->|Execution| Step5["5️⃣ EXECUTION<br/>━━━━<br/>Check-in<br/>Session Management<br/>Video Recording"]
+  Workflow -->|Follow-up| Step6["6️⃣ FOLLOW-UP<br/>━━━━<br/>Certificates<br/>Surveys<br/>Sponsor Reports"]
+  
+  Step1 --> Step2
+  Step2 --> Step3
+  Step3 --> Step4
+  Step4 --> Step5
+  Step5 --> Step6
+  
+  Step6 --> Export["📊 EXPORT & REPORT<br/>━━━━<br/>Attendance Report<br/>Financial Summary<br/>Sponsor ROI"]
+  
+  Export --> Complete["✅ COMPLETE<br/>━━━━<br/>Archive Event<br/>Update Status<br/>Log Activity"]
+  
+  Complete --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Dashboard fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Menu fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Setup fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Microsite fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Ticketing fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Registration fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Sponsorship fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Contractors fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style Portal fill:#ffcc80,stroke:#e65100,stroke-width:2px
+  style SetupActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style SiteActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style TicketActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style RegActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style SponsorActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style ContractActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style PortalActions fill:#ffb74d,stroke:#e65100,stroke-width:1px
+  style Workflow fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style Step1 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step2 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step3 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step4 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step5 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Step6 fill:#e1bee7,stroke:#4a148c,stroke-width:2px
+  style Export fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Complete fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

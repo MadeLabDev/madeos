@@ -1,0 +1,541 @@
+%% Mermaid ER diagram for MADE OS - data entities and relationships
+%% File: @data/diagrams/made-os-data-model.mmd
+%% Generated: November 17, 2025
+
+erDiagram
+
+  %% Authentication & User Management
+  USER {
+    String id PK
+    String email UK
+    String emailVerified
+    String password
+    String twoFactorEnabled
+    Boolean isActive
+    DateTime createdAt
+    DateTime updatedAt
+  }
+
+  ACCOUNT {
+    String id PK
+    String userId FK
+    String type "oauth provider"
+    String provider
+    String providerAccountId UK
+  }
+
+  SESSION {
+    String id PK
+    String userId FK
+    String sessionToken UK
+    DateTime expires
+  }
+
+  USER_GROUP {
+    String id PK
+    String name
+    String description
+    DateTime createdAt
+  }
+
+  USER_GROUP_MEMBER {
+    String id PK
+    String userId FK
+    String groupId FK
+    DateTime addedAt
+  }
+
+  %% Roles & Permissions
+  ROLE {
+    String id PK
+    String name
+    String description
+    Boolean isActive
+  }
+
+  USER_ROLE {
+    String id PK
+    String userId FK
+    String roleId FK
+    String organizationId FK "optional"
+    String verticalId FK "optional"
+  }
+
+  MODULE {
+    String id PK
+    String name "CRM, Design, Events, Testing, Training"
+    String description
+  }
+
+  PERMISSION {
+    String id PK
+    String name "create, read, update, delete, approve"
+    String description
+  }
+
+  ROLE_PERMISSION {
+    String id PK
+    String roleId FK
+    String moduleId FK
+    String permissionId FK
+  }
+
+  %% CRM Core - Organizations
+  ORGANIZATION {
+    String id PK
+    String parentId FK "parent org for subsidiaries"
+    String name
+    String industry
+    String website
+    String email
+    String phone
+    String address
+    DateTime createdAt
+  }
+
+  %% CRM Core - Contacts
+  CONTACT {
+    String id PK
+    String organizationId FK
+    String firstName
+    String lastName
+    String title
+    String department
+    String email
+    String phone
+    String role "Primary, Billing, Technical, etc"
+    String tags "JSON array"
+    DateTime createdAt
+  }
+
+  %% CRM Core - Opportunities
+  OPPORTUNITY {
+    String id PK
+    String organizationId FK
+    String contactId FK
+    String type "Design, Testing, Training, Event"
+    String title
+    Decimal value
+    String stage "Prospecting, Negotiation, Proposal, Closed Won"
+    Int probability "0-100"
+    String owner FK "User"
+    DateTime expectedCloseDate
+    DateTime createdAt
+  }
+
+  %% CRM Core - Unified Engagement
+  ENGAGEMENT {
+    String id PK
+    String organizationId FK
+    String opportunityId FK "optional"
+    String engagementType "Design, Testing, Training, Event"
+    String status "Active, Completed, Archived"
+    String title
+    Decimal budget
+    Decimal actualCost
+    String owner FK "User"
+    String team "JSON array of user IDs"
+    DateTime startDate
+    DateTime endDate
+    DateTime createdAt
+  }
+
+  %% Design Workspace
+  DESIGN_PROJECT {
+    String id PK
+    String engagementId FK
+    String designDeckUrl
+    String assetLibraryUrl
+    String status "Concepting, Feasibility, Revision, Approval, Delivered"
+    DateTime createdAt
+  }
+
+  DESIGN_DECK {
+    String id PK
+    String designProjectId FK
+    String name
+    String productSelected "JSON array"
+    String decoration "DTG, DTF, Transfer, Embroidery"
+    String fileUrl
+    Int version
+  }
+
+  PRODUCT_DESIGN {
+    String id PK
+    String designProjectId FK
+    String productName
+    String sku
+    String mockupUrl
+    String graphicSpecUrl
+  }
+
+  SEPARATION_FILE {
+    String id PK
+    String designProjectId FK
+    String fileName
+    String fileFormat "AI, PDF, PNG"
+    String fileUrl
+    String colorSpace
+  }
+
+  OUTPUT_FILE {
+    String id PK
+    String designProjectId FK
+    String fileType "DTG, DTF, Transfer, Embroidery"
+    String fileName
+    String fileUrl
+    Int version
+  }
+
+  TECH_PACK {
+    String id PK
+    String designProjectId FK
+    String fileName
+    String fileUrl
+    String content "HTML/PDF rendering"
+    Int version
+  }
+
+  %% Events Workspace
+  EVENT {
+    String id PK
+    String engagementId FK
+    String eventName
+    String eventType "Workshop, Conference, Training, Webinar"
+    String description
+    DateTime eventDate
+    String venue
+    String city
+    String microSiteUrl
+    String status "Planning, Registration, Active, Completed"
+  }
+
+  EVENT_SESSION {
+    String id PK
+    String eventId FK
+    String sessionName
+    String presenter
+    DateTime startTime
+    DateTime endTime
+    String location
+    String description
+  }
+
+  TICKET_TYPE {
+    String id PK
+    String eventId FK
+    String name "Early Bird, Regular, VIP"
+    Decimal price
+    Int quantity
+    Int sold
+  }
+
+  REGISTRATION {
+    String id PK
+    String eventId FK
+    String contactId FK
+    String ticketTypeId FK
+    String registrationStatus "Registered, Attended, Completed"
+    DateTime registeredAt
+    String paymentStatus "Pending, Completed, Refunded"
+  }
+
+  EVENT_SPONSOR {
+    String id PK
+    String eventId FK
+    String organizationId FK
+    String sponsorshipLevel "Gold, Silver, Bronze"
+    Decimal sponsorshipAmount
+    String deliverables "JSON array"
+    DateTime createdAt
+  }
+
+  CONTRACTOR {
+    String id PK
+    String eventId FK
+    String name
+    String email
+    String role "Speaker, Facilitator, Staff"
+    Decimal paymentAmount
+    String paymentStatus "Pending, Completed"
+  }
+
+  %% Testing Workspace
+  TEST_ORDER {
+    String id PK
+    String engagementId FK
+    String orderNumber UK
+    String testType "Standard, Custom, Certification"
+    String status "Setup, Samples In, Testing, Report, Completed"
+    String reportUrl
+    DateTime createdAt
+  }
+
+  SAMPLE {
+    String id PK
+    String testOrderId FK
+    String sampleIdentifier
+    String sampleType
+    String receivedCondition
+    String storageLocation
+    DateTime receivedAt
+  }
+
+  TEST_SUITE {
+    String id PK
+    String testOrderId FK
+    String suiteName
+    String standard "ISO, ASTM, EN, Custom"
+    String description
+    String tests "JSON array of test names"
+  }
+
+  INDIVIDUAL_TEST {
+    String id PK
+    String testSuiteId FK
+    String testName
+    String testMethod
+    String expectedResult
+    String actualResult
+    String status "Pending, In Progress, Completed"
+  }
+
+  TEST_RESULT {
+    String id PK
+    String testId FK
+    String sampleId FK
+    String measurement "numeric or text"
+    String unit
+    String status "Pass, Fail, Conditional"
+    String notes
+    DateTime testedAt
+  }
+
+  TEST_REPORT {
+    String id PK
+    String testOrderId FK
+    String reportContent
+    String reportUrl
+    String certificationType
+    DateTime generatedAt
+  }
+
+  %% Training Workspace
+  TRAINING_ENGAGEMENT {
+    String id PK
+    String engagementId FK
+    String trainingType "SOP Training, Skill Development, Certification"
+    String status "Discovery, Preparation, Delivery, Assessment, Followup"
+    String sopLibraryIds "JSON array of SOP IDs"
+    DateTime createdAt
+  }
+
+  SOP_LIBRARY {
+    String id PK
+    String organizationId FK "shared across company"
+    String sopName
+    String sopDescription
+    String sopUrl
+    String content "HTML content"
+    Int version
+    DateTime createdAt
+  }
+
+  TRAINING_SESSION {
+    String id PK
+    String trainingEngagementId FK
+    String sessionName
+    String sessionType "Workshop, Online, On-Site"
+    DateTime startDate
+    DateTime endDate
+    String facilitator FK "User"
+    String materials "JSON array of file URLs"
+  }
+
+  TRAINING_ASSESSMENT {
+    String id PK
+    String trainingEngagementId FK
+    String assessmentType "Knowledge Check, Competency Test"
+    String assessmentContent
+    String resultUrl
+    String status "Pending, Completed"
+  }
+
+  IMPLEMENTATION_PLAN {
+    String id PK
+    String trainingEngagementId FK
+    String planContent
+    String actionItems "JSON array"
+    String successMetrics "JSON array"
+    DateTime createdAt
+  }
+
+  %% Shared - Tasks
+  TASK {
+    String id PK
+    String organizationId FK
+    String engagementId FK "optional"
+    String title
+    String description
+    String status "Todo, In Progress, Done"
+    String assignee FK "User"
+    String priority "Low, Medium, High"
+    DateTime dueDate
+    DateTime createdAt
+  }
+
+  %% Shared - Files & Media
+  MEDIA {
+    String id PK
+    String engagementId FK "optional"
+    String uploadedBy FK "User"
+    String fileName
+    String fileType
+    String fileUrl
+    Decimal fileSize
+    String visibility "Private, Organization, Public"
+    DateTime uploadedAt
+  }
+
+  %% Shared - Interactions
+  INTERACTION {
+    String id PK
+    String organizationId FK
+    String contactId FK
+    String engagementId FK "optional"
+    String interactionType "Meeting, Call, Email, Note"
+    String subject
+    String notes
+    String participants "JSON array of user IDs"
+    DateTime interactionDate
+  }
+
+  %% Shared - Activity Timeline
+  ACTIVITY_LOG {
+    String id PK
+    String userId FK
+    String organizationId FK "optional"
+    String entityType "Organization, Contact, Engagement, Task, etc"
+    String entityId FK
+    String action "create, update, delete, approve, download"
+    String changes "JSON diff"
+    DateTime createdAt
+  }
+
+  %% Financial
+  INVOICE {
+    String id PK
+    String engagementId FK
+    String organizationId FK
+    String invoiceNumber UK
+    Decimal amount
+    String status "Draft, Sent, Paid, Overdue"
+    DateTime issueDate
+    DateTime dueDate
+    String lineItems "JSON array"
+    String qbSyncId "QuickBooks integration"
+  }
+
+  PAYMENT {
+    String id PK
+    String invoiceId FK
+    String paymentMethod "Card, Check, Bank Transfer"
+    Decimal amount
+    String status "Pending, Completed, Failed"
+    String transactionId "Stripe transaction ID"
+    DateTime paymentDate
+  }
+
+  NOTIFICATION {
+    String id PK
+    String userId FK
+    String organizationId FK "optional"
+    String type "Engagement, Task, Approval, System"
+    String message
+    String link "URL to entity"
+    Boolean read
+    DateTime createdAt
+  }
+
+  %% Settings
+  SETTINGS {
+    String id PK
+    String key
+    String value
+    String settingType "system, organization"
+  }
+
+  %% Relationships - Auth
+  USER ||--o{ ACCOUNT : "oauth_accounts"
+  USER ||--o{ SESSION : "sessions"
+  USER ||--o{ USER_ROLE : "roles"
+  USER ||--o{ USER_GROUP_MEMBER : "groups"
+  USER_GROUP ||--o{ USER_GROUP_MEMBER : "members"
+
+  %% Relationships - RBAC
+  ROLE ||--o{ USER_ROLE : "assigned"
+  ROLE ||--o{ ROLE_PERMISSION : "grants"
+  MODULE ||--o{ ROLE_PERMISSION : "scoped"
+  PERMISSION ||--o{ ROLE_PERMISSION : "used_by"
+
+  %% Relationships - CRM Core
+  ORGANIZATION ||--o{ CONTACT : "has"
+  ORGANIZATION ||--o{ OPPORTUNITY : "has"
+  ORGANIZATION ||--o{ ENGAGEMENT : "has"
+  CONTACT ||--o{ OPPORTUNITY : "involved_in"
+  CONTACT ||--o{ INTERACTION : "participates"
+  ORGANIZATION ||--o{ INTERACTION : "logs"
+
+  %% Relationships - Opportunities to Engagements
+  OPPORTUNITY ||--|| ENGAGEMENT : "converts"
+
+  %% Relationships - Design Workspace
+  ENGAGEMENT ||--|| DESIGN_PROJECT : "type_design"
+  DESIGN_PROJECT ||--o{ DESIGN_DECK : "contains"
+  DESIGN_PROJECT ||--o{ PRODUCT_DESIGN : "designs"
+  DESIGN_PROJECT ||--o{ SEPARATION_FILE : "produces"
+  DESIGN_PROJECT ||--o{ OUTPUT_FILE : "generates"
+  DESIGN_PROJECT ||--o{ TECH_PACK : "includes"
+
+  %% Relationships - Events Workspace
+  ENGAGEMENT ||--|| EVENT : "type_event"
+  EVENT ||--o{ EVENT_SESSION : "has"
+  EVENT ||--o{ TICKET_TYPE : "offers"
+  EVENT ||--o{ REGISTRATION : "receives"
+  EVENT ||--o{ EVENT_SPONSOR : "has_sponsors"
+  EVENT ||--o{ CONTRACTOR : "hires"
+  CONTACT ||--o{ REGISTRATION : "registers"
+  TICKET_TYPE ||--o{ REGISTRATION : "purchased"
+
+  %% Relationships - Testing Workspace
+  ENGAGEMENT ||--|| TEST_ORDER : "type_testing"
+  TEST_ORDER ||--o{ SAMPLE : "receives"
+  TEST_ORDER ||--o{ TEST_SUITE : "defines"
+  TEST_ORDER ||--o{ TEST_REPORT : "generates"
+  TEST_SUITE ||--o{ INDIVIDUAL_TEST : "contains"
+  INDIVIDUAL_TEST ||--o{ TEST_RESULT : "produces"
+  SAMPLE ||--o{ TEST_RESULT : "tested"
+
+  %% Relationships - Training Workspace
+  ENGAGEMENT ||--|| TRAINING_ENGAGEMENT : "type_training"
+  TRAINING_ENGAGEMENT ||--o{ TRAINING_SESSION : "includes"
+  TRAINING_ENGAGEMENT ||--o{ TRAINING_ASSESSMENT : "contains"
+  TRAINING_ENGAGEMENT ||--o{ IMPLEMENTATION_PLAN : "creates"
+  ORGANIZATION ||--o{ SOP_LIBRARY : "owns"
+  TRAINING_ENGAGEMENT ||--o{ SOP_LIBRARY : "uses"
+
+  %% Relationships - Shared
+  ORGANIZATION ||--o{ TASK : "has"
+  ENGAGEMENT ||--o{ TASK : "creates"
+  ORGANIZATION ||--o{ MEDIA : "stores"
+  ENGAGEMENT ||--o{ MEDIA : "produces"
+  ENGAGEMENT ||--o{ ACTIVITY_LOG : "logs"
+  USER ||--o{ ACTIVITY_LOG : "performs"
+
+  %% Relationships - Financial
+  ENGAGEMENT ||--o{ INVOICE : "generates"
+  INVOICE ||--o{ PAYMENT : "receives"
+  INVOICE ||--o{ NOTIFICATION : "triggers"
+
+  %% Relationships - Notifications
+  USER ||--o{ NOTIFICATION : "receives"

@@ -1,0 +1,75 @@
+flowchart TD
+  Start([User Visit App])
+  
+  Start --> Auth["🔐 AUTH<br/>━━━━━━━<br/>Sign In<br/>Sign Up<br/>Forgot Password<br/>Reset Password<br/>2FA Verify"]
+  
+  Auth -->|Login Success| CheckSession{"Session Valid?"}
+  Auth -->|Login Failed| AuthFail["❌ Access Denied"]
+  AuthFail --> Auth
+  
+  CheckSession -->|No Session| AuthFail
+  CheckSession -->|Has Session| CheckRole{"User Has<br/>Permission?"}
+  
+  CheckRole -->|No Permission| Forbidden["⛔ Access Forbidden"]
+  Forbidden --> Auth
+  
+  CheckRole -->|Has Permission| Dashboard["📊 DASHBOARD<br/>━━━━━━━<br/>Overview<br/>Quick Stats<br/>Navigation"]
+  
+  Dashboard --> Menu["📁 MAIN MODULES"]
+  
+  Menu --> Users["👤 USERS<br/>━━━━━━━<br/>User List<br/>Add User<br/>Edit User<br/>Delete User<br/>Search & Filter<br/>Manage Roles"]
+  
+  Menu --> Roles["🛡️ ROLES<br/>━━━━━━━<br/>Role List<br/>Create Role<br/>Edit Permissions<br/>Module Access<br/>Delete Role"]
+  
+  Menu --> Profile["📄 PROFILE<br/>━━━━━━━<br/>Profile Builder<br/>Add Modules<br/>Drag & Drop<br/>Show/Hide Modules<br/>Reorder<br/>Public/Private"]
+  
+  Menu --> Knowledge["📚 KNOWLEDGE<br/>━━━━━━━<br/>Article List<br/>Create Article<br/>Edit Content<br/>Categories<br/>Tags<br/>Publish<br/>Visibility Control<br/>Assign Users/Groups"]
+  
+  Menu --> Media["📁 MEDIA<br/>━━━━━━━<br/>File List<br/>Upload Files<br/>Delete Files<br/>Preview<br/>Download<br/>Manage Storage"]
+  
+  Menu --> Customers["🏢 CUSTOMERS<br/>━━━━━━━<br/>Customer List<br/>Add Company<br/>Edit Info<br/>Manage Locations<br/>Billing Info<br/>Contact Details"]
+  
+  Menu --> Groups["👥 USER GROUPS<br/>━━━━━━━<br/>Group List<br/>Create Group<br/>Add Members<br/>Remove Members<br/>Share Resources"]
+  
+  Menu --> Settings["⚙️ SETTINGS<br/>━━━━━━━<br/>System Config<br/>Email Settings<br/>File Storage<br/>Backup Config<br/>User Preferences"]
+  
+  Menu --> Backup["💾 BACKUPS<br/>━━━━━━━<br/>Backup List<br/>Manual Backup<br/>Schedule Backup<br/>Restore Data<br/>Backup History"]
+  
+  Menu --> Logs["📊 LOGS<br/>━━━━━━━<br/>Activity Log<br/>User Actions<br/>System Events<br/>Filter & Search<br/>Export Report"]
+  
+  Users --> UserActions["➕ Add User<br/>✏️ Edit<br/>🔄 Change Role<br/>🔑 Reset Password<br/>🗑️ Delete"]
+  
+  Profile --> ProfileActions["➕ Add Module<br/>🎯 Select Type<br/>✏️ Edit Data<br/>👁️ Toggle Visibility<br/>🔄 Reorder<br/>🗑️ Remove"]
+  
+  Knowledge --> KnowledgeActions["✍️ Write Article<br/>📝 Edit Content<br/>🏷️ Add Category<br/>🏷️ Add Tags<br/>👥 Assign User<br/>👥 Assign Group<br/>🔓 Set Visibility<br/>📤 Publish"]
+  
+  Logout["🚪 LOGOUT"]
+  
+  Users --> Logout
+  Roles --> Logout
+  Profile --> Logout
+  Knowledge --> Logout
+  Media --> Logout
+  Customers --> Logout
+  Groups --> Logout
+  Settings --> Logout
+  Backup --> Logout
+  Logs --> Logout
+  
+  Logout --> End(["End Session"])
+  
+  style Auth fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Dashboard fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Menu fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Users fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Roles fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Profile fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Knowledge fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Media fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Customers fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Groups fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Settings fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Backup fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Logs fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style AuthFail fill:#ffebee,stroke:#c62828,stroke-width:2px
+  style Forbidden fill:#ffebee,stroke:#c62828,stroke-width:2px

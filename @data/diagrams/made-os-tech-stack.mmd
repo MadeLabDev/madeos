@@ -1,0 +1,56 @@
+%% init { 'theme': 'dark', 'flowchart': { 'nodeSpacing': 150, 'rankSpacing': 120 } }
+flowchart LR
+  classDef backend fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:3px;
+  classDef frontend fill:#065f46,stroke:#34d399,color:#ffffff,stroke-width:3px;
+  classDef testing fill:#92400e,stroke:#fbbf24,color:#ffffff,stroke-width:3px;
+  classDef devtools fill:#374151,stroke:#d1d5db,color:#ffffff,stroke-width:3px;
+
+  subgraph "BACKEND"
+    direction TB
+    Server["Server & Framework<br/>Next.js 16 App Router<br/>API Routes, Server Actions<br/>SSR, Streaming"]:::backend
+    ORM["Database ORM<br/>Prisma<br/>MySQL (Prod)<br/>SQLite (Dev)"]:::backend
+    AuthServices["Auth & Services<br/>NextAuth.js v5, JWT<br/>Google OAuth, bcryptjs<br/>Pusher, node-cron"]:::backend
+  end
+
+  DevTools["DEVELOPMENT TOOLS<br/>TypeScript (ES2022)<br/>ESLint, Prettier<br/>Prisma Studio"]:::devtools
+
+  Testing["TESTING & QUALITY<br/>Vitest (Unit/Integration)<br/>Playwright (E2E)<br/>Testing Library"]:::testing
+
+  subgraph "FRONTEND"
+    direction TB
+    Core["Core & Rendering<br/>React 19<br/>Server & Client Components<br/>Suspense Boundaries"]:::frontend
+    UI["UI & Styling<br/>Tailwind CSS v4<br/>Shadcn UI Components<br/>SASS/SCSS"]:::frontend
+    Libs["Libraries<br/>Lexical (Rich Editor)<br/>React Hook Form + Zod<br/>@dnd-kit, Lucide Icons"]:::frontend
+  end
+
+  subgraph "INFRASTRUCTURE"
+    direction LR
+    Hosting["Deployment<br/>Vercel (Edge)<br/>CI/CD Pipeline<br/>Auto Scaling"]:::backend
+    StorageRT["Storage & Real-time<br/>AWS S3 / DO Spaces<br/>Pusher WebSockets<br/>CDN Delivery"]:::backend
+    EmailAuto["Email & Automation<br/>SMTP (SendGrid)<br/>React Email Templates<br/>node-cron Scheduling"]:::backend
+    IntegrationAPIs["Integrations<br/>Google OAuth<br/>Stripe Payments<br/>QuickBooks Sync"]:::backend
+  end
+
+  %% Connections
+  Server -->|renders| Core
+  ORM -->|data models| Core
+  AuthServices -->|authentication| Core
+  Core -->|UI rendering| UI
+  UI -->|enhanced components| Libs
+  Server -->|API routes| Libs
+  Server -->|deploy to| Hosting
+  ORM -->|database| Hosting
+  AuthServices -->|OAuth tokens| Hosting
+  StorageRT -->|files & real-time| Hosting
+  EmailAuto -->|transactional| Hosting
+  IntegrationAPIs -->|payments & sync| Hosting
+  Testing -->|quality checks| Server
+  DevTools -->|development| Server
+  DevTools -->|formatting| Testing
+
+  style Server fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:2px
+  style ORM fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:2px
+  style AuthServices fill:#1e3a8a,stroke:#60a5fa,color:#ffffff,stroke-width:2px
+  style Core fill:#065f46,stroke:#34d399,color:#ffffff,stroke-width:2px
+  style UI fill:#065f46,stroke:#34d399,color:#ffffff,stroke-width:2px
+  style Libs fill:#065f46,stroke:#34d399,color:#ffffff,stroke-width:2px

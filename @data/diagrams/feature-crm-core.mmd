@@ -1,0 +1,77 @@
+flowchart TD
+  Start([User Access CRM])
+  
+  Start --> Check{"Has CRM<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return to Dashboard"])
+  
+  Check -->|Yes| Dashboard["📊 CRM DASHBOARD<br/>━━━━━━━<br/>Overview<br/>Recent Activities<br/>Quick Stats<br/>Navigation"]
+  
+  Dashboard --> Menu["📁 CRM MODULES"]
+  
+  Menu --> Org["🏢 ORGANIZATIONS<br/>━━━━━━━<br/>Company Profiles<br/>Industry, Website<br/>Contact Info<br/>Parent/Subsidiary"]
+  
+  Menu --> Contact["👥 CONTACTS<br/>━━━━━━━<br/>Person Management<br/>Title, Department<br/>Email, Phone<br/>Role Tags"]
+  
+  Menu --> Opportunity["🎯 OPPORTUNITIES<br/>━━━━━━━<br/>Pipeline Tracking<br/>Type: Design/Test<br/>Training/Event<br/>Value, Stage"]
+  
+  Menu --> Engagement["🤝 ENGAGEMENTS<br/>━━━━━━━<br/>Unified Object<br/>Design/Test<br/>Training/Event<br/>Budget, Owner"]
+  
+  Menu --> Interaction["💬 INTERACTIONS<br/>━━━━━━━<br/>Meeting Notes<br/>Call Logs<br/>Email Tracking<br/>Approval History"]
+  
+  Menu --> Task["✅ TASKS<br/>━━━━━━━<br/>Task Management<br/>Assignment<br/>Status Tracking<br/>Kanban/Calendar"]
+  
+  Menu --> Activity["📊 ACTIVITY LOG<br/>━━━━━━━<br/>Timeline<br/>User Actions<br/>Audit Trail<br/>Export Reports"]
+  
+  Menu --> Notification["🔔 NOTIFICATIONS<br/>━━━━━━━<br/>In-app Alerts<br/>Email Digest<br/>Real-time Updates<br/>Subscribe/Manage"]
+  
+  Org --> OrgActions["➕ Add Organization<br/>✏️ Edit Details<br/>👥 Add Contacts<br/>📊 View Pipeline<br/>💰 View Revenue<br/>📅 View Timeline<br/>🗑️ Archive"]
+  
+  Contact --> ContactActions["➕ Add Contact<br/>✏️ Edit Profile<br/>🏷️ Add Tags<br/>📞 Log Interaction<br/>📋 View Engagements<br/>📧 Send Email<br/>📊 View History"]
+  
+  Opportunity --> OppActions["➕ Create Opportunity<br/>✏️ Update Stage<br/>💰 Update Value<br/>📎 Link to Contact<br/>📄 Attach Documents<br/>✅ Mark Closed<br/>🔄 Convert to Engagement"]
+  
+  Engagement --> EngActions["➕ Create Engagement<br/>✏️ Update Status<br/>💰 Set Budget<br/>👥 Assign Team<br/>📅 Set Dates<br/>🎨 Link to Design/Test<br/>📊 View Financials"]
+  
+  Interaction --> IntActions["➕ Add Note<br/>📞 Log Meeting<br/>✉️ Log Email<br/>👥 Add Participants<br/>📎 Attach Files<br/>✏️ Edit Note<br/>🗑️ Delete"]
+  
+  Task --> TaskActions["➕ Create Task<br/>✏️ Edit Details<br/>👥 Assign Owner<br/>🎯 Change Priority<br/>✅ Mark Done<br/>🔄 Reorder<br/>📋 Link to Engagement"]
+  
+  Activity --> ActivityActions["📊 View Timeline<br/>🔍 Filter Events<br/>📤 Export Log<br/>👤 View by User<br/>📌 Pin Important<br/>🔎 Search Events"]
+  
+  Notification --> NotifActions["🔔 View All<br/>✅ Mark Read<br/>⭐ Prioritize<br/>🔗 View Source<br/>📧 Email Settings<br/>⚙️ Notification Prefs"]
+  
+  OrgActions --> Export["📤 EXPORT & SHARE<br/>━━━━━━━<br/>Export CSV<br/>Share Link<br/>Print Report"]
+  
+  ContactActions --> Export
+  OppActions --> Export
+  EngActions --> Export
+  IntActions --> Export
+  TaskActions --> Export
+  ActivityActions --> Export
+  NotifActions --> Export
+  
+  Export --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Dashboard fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Menu fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Org fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Contact fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style Opportunity fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Engagement fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Interaction fill:#f0f4c3,stroke:#557a00,stroke-width:2px
+  style Task fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style Activity fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style Notification fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style OrgActions fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style ContactActions fill:#fce4ec,stroke:#880e4f,stroke-width:1px
+  style OppActions fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style EngActions fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style IntActions fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style TaskActions fill:#e0f2f1,stroke:#004d40,stroke-width:1px
+  style ActivityActions fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
+  style NotifActions fill:#ede7f6,stroke:#3f2c70,stroke-width:1px
+  style Export fill:#ecf0f1,stroke:#2c3e50,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

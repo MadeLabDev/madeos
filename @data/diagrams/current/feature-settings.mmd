@@ -1,0 +1,15 @@
+flowchart TD
+  LIST[Settings] --> VIEW_KEY[View Key]
+  LIST --> CREATE_KEY[Create Key]
+  VIEW_KEY --> UPDATE_VAL[Update Value]
+  VIEW_KEY --> DELETE_KEY[Delete Key]
+
+  subgraph Data
+    S[Settings] --> KEY[Key]
+    S --> VAL[Value]
+    S --> DESC[Description]
+  end
+
+  CREATE_KEY --> S
+  UPDATE_VAL --> S
+  DELETE_KEY --> S

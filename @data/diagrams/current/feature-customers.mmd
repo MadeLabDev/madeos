@@ -1,0 +1,20 @@
+flowchart TD
+  LIST[Customers] --> VIEW[View Customer]
+  LIST --> CREATE[Create Customer]
+  VIEW --> EDIT[Edit Customer]
+  VIEW --> LOC[Manage Locations]
+  VIEW --> TERMS[Set Payment Terms]
+  VIEW --> NOTES[Edit Notes]
+  VIEW --> STATUS[Activate Deactivate]
+
+  subgraph Data
+    C[Customer] --> CL[Locations - children]
+    C --> PCT[Discount Percent]
+    C --> PT[Payment Terms Days]
+    C --> CLIM[Credit Limit]
+  end
+
+  CREATE --> C
+  LOC --> CL
+  TERMS --> PT
+  STATUS --> C

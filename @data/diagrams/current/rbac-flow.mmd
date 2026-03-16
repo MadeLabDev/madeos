@@ -1,0 +1,8 @@
+flowchart TD
+  R[Request - UI action] --> SA[Server Action]
+  SA --> CP{checkPermission module/action}
+  CP -- allowed --> ACT[Perform action]
+  ACT --> DB[(Prisma)]
+  ACT --> LOG[ActivityLog]
+  ACT --> OPT[Notify or email]
+  CP -- denied --> DENY[Access Denied]

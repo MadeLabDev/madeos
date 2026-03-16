@@ -1,0 +1,25 @@
+flowchart TD
+  LIST[Users List] --> VIEW[View User]
+  LIST --> CREATE[Create User]
+  VIEW --> EDIT[Edit User]
+  VIEW --> ASSIGN_ROLE[Assign Role]
+  VIEW --> ASSIGN_GROUP[Add to User Group]
+  VIEW --> PROFILE[Open Profile]
+  VIEW --> MEDIA[View Uploads]
+  VIEW --> DEACTIVATE[Deactivate User]
+
+  subgraph Data Relations
+    U[User] --> ACC[Account]
+    U --> SES[Session]
+    U --> UR[UserRole]
+    U --> UPM[UserProfile]
+    U --> UGM[UserGroupMember]
+    U --> MED[Media]
+  end
+
+  CREATE --> U
+  ASSIGN_ROLE --> UR
+  ASSIGN_GROUP --> UGM
+  PROFILE --> UPM
+  MEDIA --> MED
+  DEACTIVATE --> U

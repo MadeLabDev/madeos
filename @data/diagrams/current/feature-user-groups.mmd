@@ -1,0 +1,21 @@
+flowchart TD
+  LIST[User Groups] --> VIEW[View Group]
+  LIST --> CREATE[Create Group]
+  VIEW --> ADD_MEMBERS[Add Members]
+  VIEW --> REMOVE_MEMBER[Remove Member]
+  VIEW --> ASSIGN_KNOW[Assign to Knowledge]
+  VIEW --> EMAIL_NOTIFY[Send Assignment Email]
+  VIEW --> DELETE[Delete Group]
+
+  subgraph Data Relations
+    G[UserGroup] <-- UGM[UserGroupMember] --> U[User]
+    G --> KAG[KnowledgeAssignedGroup]
+    KAG --> K[Knowledge]
+  end
+
+  CREATE --> G
+  ADD_MEMBERS --> UGM
+  REMOVE_MEMBER --> UGM
+  ASSIGN_KNOW --> KAG
+  EMAIL_NOTIFY --> K
+  DELETE --> G

@@ -1,0 +1,101 @@
+flowchart TD
+  Start([User Access Billing & Financial])
+  
+  Start --> Check{"Has Finance<br/>Permission?"}
+  Check -->|No| Deny["❌ Access Denied"]
+  Deny --> End1(["Return"])
+  
+  Check -->|Yes| Dashboard["💳 BILLING & FINANCIAL DASHBOARD<br/>━━━━━━━━━━<br/>Revenue Overview<br/>Outstanding Invoices<br/>Recent Payments<br/>Financial Reports"]
+  
+  Dashboard --> Menu["📁 BILLING MODULES"]
+  
+  Menu --> Invoices["📄 INVOICES<br/>━━━━━━━━<br/>Invoice List<br/>Create Invoice<br/>Send Invoice<br/>Track Payment"]
+  
+  Menu --> Payments["💳 PAYMENTS<br/>━━━━━━━━<br/>Payment Records<br/>Process Payment<br/>Refunds<br/>Failed Payments"]
+  
+  Menu --> Revenue["📊 REVENUE<br/>━━━━━━━━<br/>Revenue per Engagement<br/>Revenue per Customer<br/>Pipeline Revenue<br/>Forecasting"]
+  
+  Menu --> Reconciliation["🔄 RECONCILIATION<br/>━━━━━━━━<br/>QB Sync Status<br/>Match Transactions<br/>Discrepancies<br/>Sync History"]
+  
+  Menu --> Reports["📈 REPORTS<br/>━━━━━━━━<br/>Financial Reports<br/>P&L Analysis<br/>Cash Flow<br/>Aging Report"]
+  
+  Menu --> Settings["⚙️ SETTINGS<br/>━━━━━━━━<br/>Payment Methods<br/>Tax Settings<br/>Invoice Template<br/>QB Configuration"]
+  
+  Invoices --> InvoiceActions["➕ Create Invoice<br/>✏️ Edit Invoice<br/>📧 Send Invoice<br/>💳 Record Payment<br/>📥 Download PDF<br/>🔄 Sync to QB<br/>❌ Delete Invoice"]
+  
+  Payments --> PaymentActions["💳 Record Payment<br/>🏦 Bank Transfer<br/>💳 Credit Card<br/>✅ Mark Paid<br/>❌ Process Refund<br/>🔄 Retry Failed<br/>📧 Send Receipt"]
+  
+  Revenue --> RevenueActions["📊 View Revenue<br/>💰 By Engagement<br/>💰 By Customer<br/>💰 By Vertical<br/>📈 Trend Analysis<br/>🎯 Forecasting<br/>📥 Export Report"]
+  
+  Reconciliation --> ReconActions["🔄 Sync QB<br/>📋 Review Sync Log<br/>✅ Match Items<br/>⚠️ Flag Issues<br/>🔍 Investigate<br/>✏️ Manual Override<br/>📊 Status Report"]
+  
+  Reports --> ReportActions["📈 Financial Report<br/>📉 P&L Statement<br/>💵 Cash Flow<br/>🏷️ Aging Report<br/>📅 Period Report<br/>📥 Export PDF<br/>📧 Email Report"]
+  
+  Settings --> SettingActions["💳 Payment Methods<br/>🏦 Stripe Setup<br/>📊 QB Connection<br/>🧾 Invoice Template<br/>🏢 Company Info<br/>📧 Email Settings<br/>💰 Tax Settings"]
+  
+  InvoiceActions --> InvoiceFlow{{"Invoice Stage?"}}
+  PaymentActions --> PaymentFlow{{"Payment Status?"}}
+  RevenueActions --> Dashboard
+  ReconActions --> Dashboard
+  ReportActions --> Dashboard
+  SettingActions --> Dashboard
+  
+  InvoiceFlow -->|New| Step1I["1️⃣ CREATE<br/>━━━━<br/>Set Amount<br/>Add Line Items<br/>Set Due Date"]
+  InvoiceFlow -->|Sent| Step2I["2️⃣ SENT<br/>━━━━<br/>Customer Received<br/>Awaiting Payment"]
+  InvoiceFlow -->|Partial| Step3I["3️⃣ PARTIAL<br/>━━━━<br/>Received Some<br/>Awaiting Balance"]
+  InvoiceFlow -->|Paid| Step4I["4️⃣ PAID<br/>━━━━<br/>Payment Received<br/>Synced to QB"]
+  
+  Step1I -->|Send| Step2I
+  Step2I -->|Receive Payment| Step3I
+  Step3I -->|Receive Balance| Step4I
+  
+  PaymentFlow -->|Pending| PStep1["⏳ PENDING<br/>━━━━<br/>Payment Initiated<br/>Awaiting Auth"]
+  PaymentFlow -->|Processing| PStep2["⚙️ PROCESSING<br/>━━━━<br/>Stripe Processing<br/>Verifying Funds"]
+  PaymentFlow -->|Completed| PStep3["✅ COMPLETED<br/>━━━━<br/>Payment Success<br/>Funds Received"]
+  PaymentFlow -->|Failed| PStep4["❌ FAILED<br/>━━━━<br/>Payment Declined<br/>Manual Follow-up"]
+  
+  PStep1 -->|Auth| PStep2
+  PStep2 -->|Success| PStep3
+  PStep2 -->|Failure| PStep4
+  PStep4 -->|Retry| PStep1
+  
+  Step4I --> QBSync["🔄 QB SYNC<br/>━━━━<br/>Send Invoice<br/>Send Payment<br/>Update Status"]
+  
+  PStep3 --> QBSync
+  
+  QBSync --> Complete["✅ COMPLETE<br/>━━━━<br/>All Data Synced<br/>Activity Logged<br/>Reports Updated"]
+  
+  Complete --> Export["📤 EXPORT & REPORT<br/>━━━━<br/>PDF Invoice<br/>Payment Receipt<br/>Financial Report"]
+  
+  Export --> Logout["🚪 LOGOUT"]
+  Logout --> End2(["End Session"])
+  
+  style Start fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style Dashboard fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style Menu fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style Invoices fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style Payments fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style Revenue fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style Reconciliation fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style Reports fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style Settings fill:#e1bee7,stroke:#3f2c70,stroke-width:2px
+  style InvoiceActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style PaymentActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style RevenueActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style ReconActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style ReportActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style SettingActions fill:#ce93d8,stroke:#3f2c70,stroke-width:1px
+  style InvoiceFlow fill:#fff3e0,stroke:#e65100,stroke-width:2px
+  style PaymentFlow fill:#fff3e0,stroke:#e65100,stroke-width:2px
+  style Step1I fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step2I fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step3I fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Step4I fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style PStep1 fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style PStep2 fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style PStep3 fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style PStep4 fill:#ffebee,stroke:#c62828,stroke-width:2px
+  style QBSync fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Complete fill:#c8e6c9,stroke:#1b5e20,stroke-width:2px
+  style Export fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Deny fill:#ffebee,stroke:#c62828,stroke-width:2px

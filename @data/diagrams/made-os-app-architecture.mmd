@@ -1,0 +1,92 @@
+flowchart TD
+  Start([User Visit App])
+  
+  Start --> Auth["🔐 AUTH<br/>━━━━━━━<br/>Sign In<br/>Sign Up<br/>Forgot Password<br/>Reset Password<br/>2FA Verify"]
+  
+  Auth -->|Login Success| CheckSession{"Session Valid?"}
+  Auth -->|Login Failed| AuthFail["❌ Access Denied"]
+  AuthFail --> Auth
+  
+  CheckSession -->|No Session| AuthFail
+  CheckSession -->|Has Session| CheckRole{"User Has<br/>Permission?"}
+  
+  CheckRole -->|No Permission| Forbidden["⛔ Access Forbidden"]
+  Forbidden --> Auth
+  
+  CheckRole -->|Has Permission| Dashboard["📊 DASHBOARD<br/>━━━━━━━<br/>Overview<br/>Quick Stats<br/>Navigation"]
+  
+  Dashboard --> Menu["📁 MAIN MODULES"]
+  
+  Menu --> CRM["💼 CRM<br/>━━━━━━━<br/>Organizations<br/>Contacts<br/>Opportunities<br/>Engagements"]
+  
+  Menu --> Design["🎨 DESIGN<br/>━━━━━━━<br/>Design Projects<br/>Design Decks<br/>Product Design<br/>Tech Packs<br/>Deliverables"]
+  
+  Menu --> Events["🎪 EVENTS<br/>━━━━━━━<br/>Event Setup<br/>Microsite<br/>Registration<br/>Sponsorship<br/>Check-in"]
+  
+  Menu --> Testing["🧪 TESTING<br/>━━━━━━━<br/>Test Orders<br/>Samples<br/>Test Suites<br/>Results<br/>Reports"]
+  
+  Menu --> Training["📖 TRAINING<br/>━━━━━━━<br/>Training Programs<br/>SOP Library<br/>Sessions<br/>Assessments<br/>Implementation"]
+  
+  Menu --> Shared["🔗 SHARED<br/>━━━━━━━<br/>Tasks & Workflows<br/>Files & Assets<br/>Notifications<br/>Activity Timeline"]
+  
+  Menu --> Settings["⚙️ SETTINGS<br/>━━━━━━━<br/>System Config<br/>User Management<br/>Role Permissions<br/>Backup Config"]
+  
+  CRM --> CRMActions["➕ Add Organization<br/>➕ Add Contact<br/>➕ Create Opportunity<br/>➕ Create Engagement<br/>📝 Edit Info<br/>📊 View Timeline"]
+  
+  Design --> DesignActions["➕ New Design Project<br/>📤 Upload Assets<br/>✏️ Create Design Deck<br/>🔧 Define Tech Packs<br/>✅ Approve Deliverables<br/>📥 Download Files"]
+  
+  Events --> EventActions["➕ Create Event<br/>🌐 Build Microsite<br/>🎟️ Setup Ticketing<br/>👥 Manage Sponsors<br/>✅ Check-in Attendees<br/>📊 View Analytics"]
+  
+  Testing --> TestingActions["➕ Create Test Order<br/>📦 Receive Samples<br/>🧬 Run Test Suite<br/>📊 Capture Results<br/>📋 Generate Report<br/>📤 Share with Customer"]
+  
+  Training --> TrainingActions["➕ Create Program<br/>📚 Select SOPs<br/>🎓 Schedule Sessions<br/>✍️ Create Assessment<br/>📝 Track Progress<br/>📊 Generate Report"]
+  
+  Shared --> SharedActions["✅ Create/Manage Tasks<br/>📁 Upload Files<br/>📝 Add Notes<br/>🔔 Notifications<br/>📊 View Activity Log<br/>📤 Export Reports"]
+  
+  Settings --> SettingsActions["👤 Manage Users<br/>👥 Manage Groups<br/>🛡️ Set Roles<br/>⚙️ Configure Modules<br/>💾 Backup System<br/>📊 View Logs"]
+  
+  CRM --> Portal
+  Design --> Portal
+  Events --> Portal
+  Testing --> Portal
+  Training --> Portal
+  
+  subgraph Portal["🌐 PUBLIC PORTALS"]
+    CustomerPortal["🏢 Customer Portal<br/>View Engagements<br/>Download Assets<br/>Approve Deliverables<br/>View Invoices"]
+    EventPortal["🎪 Event Portal<br/>Register & Ticket<br/>View Schedule<br/>Access Materials<br/>Watch Replays"]
+    SponsorPortal["👥 Sponsor Portal<br/>Manage Deliverables<br/>Upload Assets<br/>Track ROI"]
+  end
+  
+  Logout["🚪 LOGOUT"]
+  
+  CRMActions --> Logout
+  DesignActions --> Logout
+  EventActions --> Logout
+  TestingActions --> Logout
+  TrainingActions --> Logout
+  SharedActions --> Logout
+  SettingsActions --> Logout
+  
+  Logout --> End(["End Session"])
+  
+  style Auth fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Dashboard fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style Menu fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+  style CRM fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style Design fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style Events fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style Testing fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+  style Training fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style Shared fill:#f0f4c3,stroke:#557a00,stroke-width:2px
+  style Settings fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+  style CRMActions fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style DesignActions fill:#fce4ec,stroke:#880e4f,stroke-width:1px
+  style EventActions fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style TestingActions fill:#e0f2f1,stroke:#004d40,stroke-width:1px
+  style TrainingActions fill:#f1f8e9,stroke:#1b5e20,stroke-width:1px
+  style SharedActions fill:#f0f4c3,stroke:#557a00,stroke-width:1px
+  style SettingsActions fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
+  style Portal fill:#ecf0f1,stroke:#2c3e50,stroke-width:2px
+  style CustomerPortal fill:#fff9c4,stroke:#f57f17,stroke-width:1px
+  style EventPortal fill:#ffe0b2,stroke:#e65100,stroke-width:1px
+  style SponsorPortal fill:#fce4ec,stroke:#880e4f,stroke-width:1px

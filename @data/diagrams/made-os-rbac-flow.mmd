@@ -1,0 +1,8 @@
+flowchart TD
+  R[Request - UI action] --> SA[Server Action]
+  SA --> CP{checkPermission<br/>module/action<br/>organization/vertical}
+  CP -- allowed --> ACT[Perform action]
+  ACT --> DB[(Prisma<br/>MySQL)]
+  ACT --> LOG[ActivityLog<br/>audit trail]
+  ACT --> OPT[Notify or email<br/>Pusher real-time]
+  CP -- denied --> DENY[Access Denied<br/>error response]

@@ -1,0 +1,134 @@
+---
+config:
+  layout: elk
+  look: handDrawn
+  theme: base
+---
+graph TB
+  subgraph AUTH["Authentication Layer"]
+    User["👤 User<br/>email, username<br/>password, 2FA<br/>isActive, emailVerified"]
+    Account["Account<br/>OAuth providers<br/>Google, GitHub"]
+    Session["Session<br/>sessionToken<br/>expires"]
+    
+    User -->|oauth| Account
+    User -->|sessions| Session
+  end
+
+  subgraph RBAC["RBAC System"]
+    Role["Role<br/>Admin, Manager<br/>User, Viewer"]
+    Module["Module<br/>Dashboard, Knowledge<br/>Customers, Profile"]
+    Permission["Permission<br/>create, read<br/>update, delete"]
+    UserRole["UserRole<br/>junction table<br/>user to role"]
+    RolePermission["RolePermission<br/>role to module<br/>to permission"]
+    
+    User -->|assigned to| UserRole
+    UserRole -->|contains| Role
+    Role -->|grants| RolePermission
+    Module -->|scoped to| RolePermission
+    Permission -->|defines| RolePermission
+  end
+
+  subgraph GROUPS["User Groups"]
+    UserGroup["UserGroup<br/>name, description<br/>created metadata"]
+    UserGroupMember["UserGroupMember<br/>junction table<br/>user to group"]
+    
+    User -->|joins| UserGroupMember
+    UserGroup -->|contains| UserGroupMember
+  end
+
+  AUTH -->|authenticated users| PROFILE
+
+  subgraph PROFILE["🎯 User Profile System"]
+    direction TB
+    User2["User<br/>Can create & manage<br/>their own profile"]
+    UserProfile["UserProfile<br/>slug, isPublic<br/>metadata, viewCount<br/>metaTitle, metaDescription<br/>---<br/>Visibility:<br/>Private: only owner<br/>Public: anyone via slug"]
+    
+    UserProfileModule["UserProfileModule<br/>data: JSON<br/>order: number<br/>column: 1 or 2<br/>isVisible: boolean<br/>---<br/>Create, Read, Update<br/>Delete, Reorder, Toggle"]
+    
+    ModuleType["ModuleType<br/>system, key<br/>fieldSchema: JSON<br/>isEnabled"]
+    
+    subgraph ModuleOps["Module Operations<br/>by Profile Owner"]
+      AddMod["Add Module<br/>addModuleAction"]
+      EditMod["Edit Module<br/>updateModuleAction<br/>data: JSON"]
+      DeleteMod["Delete Module<br/>deleteModuleAction"]
+      ReorderMod["Reorder Module<br/>reorderModulesAction<br/>update: order, column"]
+      ToggleMod["Toggle Visibility<br/>toggleModuleVisibilityAction<br/>isVisible: boolean"]
+    end
+    
+    User2 -->|owns 1:1| UserProfile
+    UserProfile -->|contains many| UserProfileModule
+    UserProfile -->|manages| ModuleOps
+    ModuleType -->|optional reference| UserProfileModule
+    
+    AddMod -->|creates| UserProfileModule
+    EditMod -->|updates| UserProfileModule
+    DeleteMod -->|removes| UserProfileModule
+    ReorderMod -->|reorders| UserProfileModule
+    ToggleMod -->|toggles| UserProfileModule
+  end
+
+  subgraph KNOWLEDGE["Knowledge Base"]
+    Knowledge["Knowledge<br/>title, content<br/>slug, visibility<br/>---<br/>visibility: public<br/>            private<br/>---<br/>Public: anyone can read<br/>Private: only assigned<br/>users/groups can read"]
+    KnowledgeCategory["KnowledgeCategory<br/>name, slug<br/>color, icon"]
+    KnowledgeTag["KnowledgeTag<br/>name, slug<br/>color"]
+    KnowledgeCategoriesOnKnowledge["KnowledgeCategoriesOnKnowledge<br/>junction<br/>knowledge to category"]
+    KnowledgeTagsOnKnowledge["KnowledgeTagsOnKnowledge<br/>junction<br/>knowledge to tag"]
+    KnowledgeAssignedUser["KnowledgeAssignedUser<br/>private access<br/>specific user<br/>can read if visibility=private"]
+    KnowledgeAssignedGroup["KnowledgeAssignedGroup<br/>private access<br/>user group<br/>can read if visibility=private"]
+    KnowledgeEmailLog["KnowledgeEmailLog<br/>tracking notifications<br/>sentAt, status"]
+    
+    Knowledge -->|tagged with| KnowledgeCategoriesOnKnowledge
+    KnowledgeCategory -->|has| KnowledgeCategoriesOnKnowledge
+    Knowledge -->|tagged with| KnowledgeTagsOnKnowledge
+    KnowledgeTag -->|has| KnowledgeTagsOnKnowledge
+    Knowledge -->|assigned to| KnowledgeAssignedUser
+    User -->|can access if private| KnowledgeAssignedUser
+    Knowledge -->|assigned to| KnowledgeAssignedGroup
+    UserGroup -->|can access if private| KnowledgeAssignedGroup
+    Knowledge -->|notified| KnowledgeEmailLog
+    User -->|recipient| KnowledgeEmailLog
+  end
+
+  subgraph MEDIA["Media Library"]
+    Media["Media<br/>name, url, type<br/>size, visibility<br/>uploadedBy"]
+    
+    User -->|uploads| Media
+  end
+
+  subgraph CUSTOMER["Customer Management"]
+    Customer["Customer<br/>companyName, email<br/>address, contact<br/>discount, credit"]
+    
+    Customer -->|parent has locations| Customer
+  end
+
+  subgraph LOGS["Logs and Settings"]
+    ActivityLog["ActivityLog<br/>userId, action<br/>entity, entityId<br/>audit trail"]
+    Settings["Settings<br/>key-value pairs<br/>system config"]
+    
+    User -->|logs actions| ActivityLog
+  end
+
+  subgraph FORMS["External Forms"]
+    ExternalFormData["ExternalFormData<br/>key, data<br/>external submissions"]
+  end
+
+  subgraph BACKUP["Backup System"]
+    BackupRecord["BackupRecord<br/>fileName, status<br/>fileSize, createdAt"]
+    BackupStats["BackupStats<br/>totalBackups<br/>successfulBackups"]
+    BackupSettings["BackupSettings<br/>schedule, retention<br/>storage config"]
+    
+    BackupRecord -->|updates| BackupStats
+    BackupSettings -->|governs| BackupRecord
+  end
+
+  style AUTH fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+  style RBAC fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+  style GROUPS fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+  style PROFILE fill:#fff9c4,stroke:#f57f17,stroke-width:3px
+  style ModuleOps fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+  style KNOWLEDGE fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+  style MEDIA fill:#f0f4c3,stroke:#557a00,stroke-width:2px
+  style CUSTOMER fill:#ede7f6,stroke:#3f2c70,stroke-width:2px
+  style LOGS fill:#f1f8e9,stroke:#1b5e20,stroke-width:2px
+  style FORMS fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+  style BACKUP fill:#e0f2f1,stroke:#004d40,stroke-width:2px
