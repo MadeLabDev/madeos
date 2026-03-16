@@ -1,0 +1,458 @@
+import { prisma, SeederResult } from "../seeder-utils";
+
+export async function seedProfileModuleTypes(): Promise<SeederResult> {
+	console.log("📋 Seeding Profile Module Types...");
+
+	const moduleTypes = [
+		{
+			key: "work_experience",
+			system: "profile",
+			name: "Work Experience",
+			description: "Add your work experience and employment history",
+			order: 1,
+			fieldSchema: {
+				fields: [
+					{
+						id: "company",
+						name: "company",
+						label: "Company",
+						type: "text",
+						required: true,
+						placeholder: "Company name",
+						order: 1,
+					},
+					{
+						id: "role",
+						name: "role",
+						label: "Job Title",
+						type: "text",
+						required: true,
+						placeholder: "e.g., Senior Developer",
+						order: 2,
+					},
+					{
+						id: "location",
+						name: "location",
+						label: "Location",
+						type: "text",
+						required: false,
+						placeholder: "City, Country",
+						order: 3,
+					},
+					{
+						id: "startDate",
+						name: "startDate",
+						label: "Start Date",
+						type: "date",
+						required: true,
+						order: 4,
+					},
+					{
+						id: "endDate",
+						name: "endDate",
+						label: "End Date (leave empty if current)",
+						type: "date",
+						required: false,
+						order: 5,
+					},
+					{
+						id: "isCurrentRole",
+						name: "isCurrentRole",
+						label: "Currently working here",
+						type: "boolean",
+						required: false,
+						order: 6,
+					},
+					{
+						id: "description",
+						name: "description",
+						label: "Description",
+						type: "textarea",
+						required: false,
+						placeholder: "Describe your responsibilities and achievements",
+						rows: 4,
+						order: 7,
+					},
+					{
+						id: "skills",
+						name: "skills",
+						label: "Skills Used (comma-separated)",
+						type: "text",
+						required: false,
+						placeholder: "e.g., React, TypeScript, Node.js",
+						order: 8,
+					},
+				],
+			},
+		},
+		{
+			key: "education",
+			system: "profile",
+			name: "Education",
+			description: "Add your educational background",
+			order: 2,
+			fieldSchema: {
+				fields: [
+					{
+						id: "school",
+						name: "school",
+						label: "School / University",
+						type: "text",
+						required: true,
+						placeholder: "Institution name",
+						order: 1,
+					},
+					{
+						id: "degree",
+						name: "degree",
+						label: "Degree",
+						type: "select",
+						required: true,
+						options: [
+							{ value: "high_school", label: "High School" },
+							{ value: "associate", label: "Associate Degree" },
+							{ value: "bachelor", label: "Bachelor" },
+							{ value: "master", label: "Master" },
+							{ value: "phd", label: "PhD" },
+							{ value: "certificate", label: "Certificate" },
+							{ value: "bootcamp", label: "Bootcamp" },
+							{ value: "other", label: "Other" },
+						],
+						order: 2,
+					},
+					{
+						id: "field",
+						name: "field",
+						label: "Field of Study",
+						type: "text",
+						required: false,
+						placeholder: "e.g., Computer Science",
+						order: 3,
+					},
+					{
+						id: "startDate",
+						name: "startDate",
+						label: "Start Date",
+						type: "date",
+						required: true,
+						order: 4,
+					},
+					{
+						id: "endDate",
+						name: "endDate",
+						label: "End Date (leave empty if still studying)",
+						type: "date",
+						required: false,
+						order: 5,
+					},
+					{
+						id: "grade",
+						name: "grade",
+						label: "Grade / GPA",
+						type: "text",
+						required: false,
+						placeholder: "3.8 GPA",
+						order: 6,
+					},
+					{
+						id: "description",
+						name: "description",
+						label: "Description",
+						type: "textarea",
+						required: false,
+						placeholder: "e.g., Activities, notable achievements",
+						rows: 4,
+						order: 7,
+					},
+				],
+			},
+		},
+		{
+			key: "skills",
+			system: "profile",
+			name: "Skills",
+			description: "List your professional skills",
+			order: 3,
+			fieldSchema: {
+				fields: [
+					{
+						id: "name",
+						name: "name",
+						label: "Skill Name",
+						type: "text",
+						required: true,
+						placeholder: "e.g., React, Project Management",
+						order: 1,
+					},
+					{
+						id: "level",
+						name: "level",
+						label: "Proficiency Level",
+						type: "select",
+						required: true,
+						options: [
+							{ value: "beginner", label: "Beginner" },
+							{ value: "intermediate", label: "Intermediate" },
+							{ value: "advanced", label: "Advanced" },
+							{ value: "expert", label: "Expert" },
+						],
+						order: 2,
+					},
+					{
+						id: "yearsOfExperience",
+						name: "yearsOfExperience",
+						label: "Years of Experience",
+						type: "number",
+						required: false,
+						order: 3,
+					},
+					{
+						id: "endorsements",
+						name: "endorsements",
+						label: "Endorsements",
+						type: "number",
+						required: false,
+						order: 4,
+					},
+				],
+			},
+		},
+		{
+			key: "certification",
+			system: "profile",
+			name: "Certification",
+			description: "Add your professional certifications",
+			order: 4,
+			fieldSchema: {
+				fields: [
+					{
+						id: "name",
+						name: "name",
+						label: "Certification Name",
+						type: "text",
+						required: true,
+						placeholder: "e.g., AWS Certified Solutions Architect",
+						order: 1,
+					},
+					{
+						id: "issuer",
+						name: "issuer",
+						label: "Issuing Organization",
+						type: "text",
+						required: true,
+						placeholder: "e.g., Amazon",
+						order: 2,
+					},
+					{
+						id: "issueDate",
+						name: "issueDate",
+						label: "Issue Date",
+						type: "date",
+						required: true,
+						order: 3,
+					},
+					{
+						id: "expiryDate",
+						name: "expiryDate",
+						label: "Expiry Date (leave empty if no expiry)",
+						type: "date",
+						required: false,
+						order: 4,
+					},
+					{
+						id: "credentialUrl",
+						name: "credentialUrl",
+						label: "Credential URL",
+						type: "url",
+						required: false,
+						placeholder: "https://credentials.example.com/xxx",
+						order: 5,
+					},
+					{
+						id: "description",
+						name: "description",
+						label: "Description",
+						type: "textarea",
+						required: false,
+						placeholder: "Describe the certification",
+						rows: 3,
+						order: 6,
+					},
+				],
+			},
+		},
+		{
+			key: "project",
+			system: "profile",
+			name: "Project",
+			description: "Showcase your projects and portfolio work",
+			order: 5,
+			fieldSchema: {
+				fields: [
+					{
+						id: "name",
+						name: "name",
+						label: "Project Name",
+						type: "text",
+						required: true,
+						placeholder: "e.g., E-commerce Platform",
+						order: 1,
+					},
+					{
+						id: "description",
+						name: "description",
+						label: "Description",
+						type: "textarea",
+						required: true,
+						placeholder: "Describe the project and your role",
+						rows: 4,
+						order: 2,
+					},
+					{
+						id: "url",
+						name: "url",
+						label: "Project URL",
+						type: "url",
+						required: false,
+						placeholder: "https://project.example.com",
+						order: 3,
+					},
+					{
+						id: "startDate",
+						name: "startDate",
+						label: "Start Date",
+						type: "date",
+						required: true,
+						order: 4,
+					},
+					{
+						id: "endDate",
+						name: "endDate",
+						label: "End Date (leave empty if ongoing)",
+						type: "date",
+						required: false,
+						order: 5,
+					},
+					{
+						id: "technologies",
+						name: "technologies",
+						label: "Technologies Used (comma-separated)",
+						type: "text",
+						required: false,
+						placeholder: "e.g., React, Node.js, PostgreSQL",
+						order: 6,
+					},
+				],
+			},
+		},
+		{
+			key: "volunteer",
+			system: "profile",
+			name: "Volunteer Experience",
+			description: "Share your volunteer and community work",
+			order: 6,
+			fieldSchema: {
+				fields: [
+					{
+						id: "organization",
+						name: "organization",
+						label: "Organization",
+						type: "text",
+						required: true,
+						placeholder: "Organization name",
+						order: 1,
+					},
+					{
+						id: "role",
+						name: "role",
+						label: "Volunteer Role",
+						type: "text",
+						required: true,
+						placeholder: "e.g., Technical Mentor",
+						order: 2,
+					},
+					{
+						id: "location",
+						name: "location",
+						label: "Location",
+						type: "text",
+						required: false,
+						placeholder: "City, Country",
+						order: 3,
+					},
+					{
+						id: "startDate",
+						name: "startDate",
+						label: "Start Date",
+						type: "date",
+						required: true,
+						order: 4,
+					},
+					{
+						id: "endDate",
+						name: "endDate",
+						label: "End Date (leave empty if still volunteering)",
+						type: "date",
+						required: false,
+						order: 5,
+					},
+					{
+						id: "description",
+						name: "description",
+						label: "Description",
+						type: "textarea",
+						required: false,
+						placeholder: "Describe your volunteer work and impact",
+						rows: 4,
+						order: 6,
+					},
+					{
+						id: "skills",
+						name: "skills",
+						label: "Skills Used (comma-separated)",
+						type: "text",
+						required: false,
+						placeholder: "e.g., Teaching, Mentoring",
+						order: 7,
+					},
+				],
+			},
+		},
+	];
+
+	for (const moduleType of moduleTypes) {
+		// Check if already exists
+		const existing = await prisma.moduleType.findUnique({
+			where: { key: moduleType.key },
+		});
+
+		if (existing) {
+			console.log(`  ✓ Module type "${moduleType.name}" already exists`);
+			continue;
+		}
+
+		// Create module type
+		await prisma.moduleType.create({
+			data: {
+				key: moduleType.key,
+				system: moduleType.system,
+				name: moduleType.name,
+				description: moduleType.description,
+				fieldSchema: moduleType.fieldSchema,
+				lockedFields: (moduleType as any).lockedFields || [], // Store locked field IDs
+				isEnabled: true,
+				order: moduleType.order,
+			},
+		});
+
+		console.log(`  ✓ Created module type: ${moduleType.name}`);
+	}
+
+	console.log("✅ Profile module types seeding complete\n");
+
+	return {
+		success: true,
+		message: "Profile module types seeded successfully",
+		count: moduleTypes.length,
+	};
+}

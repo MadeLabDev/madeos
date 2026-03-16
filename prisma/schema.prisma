@@ -1,0 +1,2811 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  username               String?                 @unique
+  name                   String?
+  password               String?
+  image                  String?
+  emailVerified          DateTime?
+  activationToken        String?                 @unique
+  activationTokenExpiry  DateTime?
+  isActive               Boolean                 @default(false)
+  resetToken             String?                 @unique
+  resetTokenExpiry       DateTime?
+  twoFactorEnabled       Boolean                 @default(false)
+  twoFactorSecret        String?
+  backupCodes            String?                 @db.Text
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  createdBy              String?
+  updatedBy              String?
+  accounts               Account[]
+  assignedKnowledge      KnowledgeAssignedUser[]
+  knowledgeEmailLogs     KnowledgeEmailLog[]
+  uploadedMedia          Media[]
+  sessions               Session[]
+  userGroupMembers       UserGroupMember[]
+  userProfile            UserProfile?
+  userRoles              UserRole[]
+  eventsCreated          Event[]                 @relation("EventCreatedBy")
+  eventsUpdated          Event[]                 @relation("EventUpdatedBy")
+  payments               Payment[]
+  tickets                Ticket[]
+  registrations          Registration[]
+  registrationsCheckedIn Registration[]          @relation("RegistrationCheckedInBy")
+  checkIns               CheckIn[]
+  trainingRegistrations  TrainingRegistration[]
+  trainingRegistrationsCheckedIn TrainingRegistration[] @relation("TrainingRegistrationCheckedInBy")
+  trainingCheckIns       TrainingCheckIn[]
+  trainingEngagementsAsInstructor TrainingEngagement[] @relation("TrainingEngagementInstructor")
+  trainingEngagementsAsCoordinator TrainingEngagement[] @relation("TrainingEngagementCoordinator")
+  trainingEngagementsAsRequestedBy TrainingEngagement[] @relation("TrainingEngagementRequestedBy")
+  opportunitiesOwned     Opportunity[]           @relation("OpportunityOwner")
+  marketingCampaignsCreated MarketingCampaign[]   @relation("MarketingCampaignCreatedBy")
+  marketingCampaignsUpdated MarketingCampaign[]   @relation("MarketingCampaignUpdatedBy")
+  campaignEmailsSent      CampaignEmail[]        @relation("CampaignEmailSentBy")
+  campaignTemplatesCreated CampaignTemplate[]     @relation("CampaignTemplateCreatedBy")
+  campaignTemplatesUpdated CampaignTemplate[]     @relation("CampaignTemplateUpdatedBy")
+  eventMicrositesCreated  EventMicrosite[]       @relation("EventMicrositeCreatedBy")
+  eventMicrositesUpdated  EventMicrosite[]       @relation("EventMicrositeUpdatedBy")
+  sponsorMaterialsCreated SponsorMaterial[]      @relation("SponsorMaterialCreatedBy")
+  sponsorMaterialsUpdated SponsorMaterial[]      @relation("SponsorMaterialUpdatedBy")
+  sponsorMaterialsApproved SponsorMaterial[]      @relation("SponsorMaterialApprovedBy")
+  vectorSearchLogs        VectorSearchLog[]      @relation("VectorSearchLogs")
+  ragSessions             RAGSession[]           @relation("RAGSessions")
+  ragFeedback             RAGFeedback[]          @relation("RAGFeedback")
+  chatSessions            ChatSession[]          @relation("ChatSessions")
+  subscription            UserSubscription?      @relation("UserSubscription")
+  invoices                Invoice[]              @relation("Invoices")
+
+  @@index([email])
+  @@index([username])
+}
+
+/// *
+///  * UserGroup - Groups of users for organization and bulk operations
+///  * Admin/Manager can create groups and assign users to them
+model UserGroup {
+  id                String                   @id @default(cuid())
+  name              String                   @unique
+  description       String?
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  createdBy         String?
+  updatedBy         String?
+  assignedKnowledge KnowledgeAssignedGroup[]
+  members           UserGroupMember[]
+
+  @@index([name])
+  @@index([createdAt])
+}
+
+/// *
+///  * UserGroupMember - Junction table for User-Group many-to-many relationship
+///  * Links users to groups with assignment metadata
+model UserGroupMember {
+  id         String    @id @default(cuid())
+  userId     String
+  groupId    String
+  assignedAt DateTime  @default(now())
+  assignedBy String?
+  group      UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@index([userId])
+  @@index([groupId])
+  @@index([assignedAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Role {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  displayName     String
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+
+  @@index([name])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+}
+
+model Module {
+  id              String           @id @default(cuid())
+  name            String           @unique
+  displayName     String
+  description     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
+
+  @@index([name])
+}
+
+model Permission {
+  id              String           @id @default(cuid())
+  action          String           @unique
+  displayName     String
+  description     String?
+  createdAt       DateTime         @default(now())
+  rolePermissions RolePermission[]
+
+  @@index([action])
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  moduleId     String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  module       Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, moduleId, permissionId])
+  @@index([roleId])
+  @@index([moduleId])
+  @@index([permissionId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  value     String   @db.Text
+  entity    String
+  entityId  String
+  details   String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  name         String
+  url          String
+  type         String
+  size         Int
+  visibility   String   @default("PRIVATE")
+  uploadedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  // Entity linking for attachments
+  entityType String?
+  entityId   String?
+  events     Event[]
+  eventMicrosites EventMicrosite[]
+  sponsorMaterials SponsorMaterial[]
+
+  @@index([uploadedById])
+  @@index([visibility])
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+model Settings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@index([createdAt])
+}
+
+/// *
+///  * Customer - Parent/Main customer account
+///  * Represents the main account holder (e.g., Company A)
+///  * Can have multiple child locations/branches
+model Customer {
+  id               String          @id @default(cuid())
+  companyName      String
+  email            String          @unique
+  phone            String?
+  website          String?
+  address          String
+  city             String
+  state            String
+  zipCode          String
+  country          String          @default("USA")
+  contactName      String
+  contactTitle     String?
+  contactEmail     String?
+  contactPhone     String?
+  type             String          @default("customer")
+  taxId            String?
+  parentId         String?
+  discountPercent  Float           @default(0)
+  paymentTermsDays Int             @default(30)
+  creditLimit      Float?
+  isActive         Boolean         @default(true)
+  notes            String?
+  metaData         Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  createdBy        String?
+  updatedBy        String?
+  parent           Customer?       @relation("CustomerLocations", fields: [parentId], references: [id])
+  locations        Customer[]      @relation("CustomerLocations")
+  contacts         Contact[]
+  opportunities    Opportunity[]
+  engagements      Engagement[]
+  designProjects   DesignProject[] @relation("DesignProjects")
+  trainingEngagements TrainingEngagement[] // For training engagements
+
+  @@index([email])
+  @@index([phone])
+  @@index([parentId])
+  @@index([companyName])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+/// *
+///  * ModuleType - Định nghĩa các loại module (ADMIN quản lý)
+///  * Sử dụng để tạo dynamic fields cho các entity type khác nhau
+///  * Ví dụ: blog, knowngle, product, order, profile...
+///  * Mỗi module type có fieldSchema JSON định nghĩa cấu trúc fields
+model ModuleType {
+  id              String           @id @default(cuid())
+  key             String           @unique
+  system          String           @default("profile")
+  name            String
+  description     String?
+  fieldSchema     Json
+  lockedFields    Json
+  isEnabled       Boolean          @default(true)
+  order           Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  moduleInstances ModuleInstance[]
+
+  @@index([system])
+  @@index([key])
+  @@index([isEnabled])
+  @@index([createdAt])
+}
+
+/// *
+///  * ModuleInstance - Instances of module metadata
+///  * Mỗi bản ghi metadata cho một entity cụ thể
+///  * Ví dụ: Meta cho một bài blog cụ thể
+model ModuleInstance {
+  id           String     @id @default(cuid())
+  moduleTypeId String
+  entityId     String
+  entityName   String
+  fieldValues  Json
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  createdBy    String?
+  updatedBy    String?
+  moduleType   ModuleType @relation(fields: [moduleTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleTypeId, entityId])
+  @@index([moduleTypeId])
+  @@index([entityId])
+  @@index([entityName])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+/// *
+///  * ExternalFormData - Store external form submissions
+///  * External websites submit form data to our API with a unique key
+///  * We store all submissions indexed by key for easy retrieval
+///  * 
+///  * Example:
+///  * - External form at: https://external-site.com/survey
+///  * - Submits to: POST /api/form-data/submit
+///  * - Payload: { key: "phc2025_after_survey", field: [firstName, lastName, email, formData] }
+///  * - Retrieve: GET /api/form-data/retrieve?key=phc2025_after_survey
+model ExternalFormData {
+  id        String   @id @default(cuid())
+  key       String
+  data      Json
+  ipAddress String?
+  userAgent String?
+  referer   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([createdAt])
+  @@map("FormData")
+}
+
+/// *
+///  * UserProfile - User's public/private profile with draggable modules
+///  * Mỗi user có một profile duy nhất
+///  * Profile chứa multiple modules (work experience, education, skills, etc)
+///  * Modules có thể drag-drop, sort, show/hide
+model UserProfile {
+  id              String              @id @default(cuid())
+  userId          String              @unique
+  metaData        Json
+  isPublic        Boolean             @default(false)
+  slug            String?             @unique
+  metaTitle       String?
+  metaDescription String?
+  viewCount       Int                 @default(0)
+  lastViewedAt    DateTime?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  modules         UserProfileModule[]
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([slug])
+  @@index([isPublic])
+  @@index([createdAt])
+  @@map("UserProfiles")
+}
+
+/// *
+///  * UserProfileModule - Instances of modules in user profile
+///  * Mỗi module là một section trong profile (e.g., Work Experience, Education, Skills)
+///  * Modules có thể được arrange trong 2 columns, drag-drop, sort, show/hide
+model UserProfileModule {
+  id           String      @id @default(cuid())
+  profileId    String
+  moduleTypeId String?
+  data         Json
+  order        Int         @default(0)
+  column       Int         @default(1)
+  isVisible    Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  profile      UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([order])
+  @@index([column])
+  @@map("UserProfileModules")
+}
+
+/// *
+///  * KnowledgeCategory - Categories for knowledge articles
+///  * Gốc cho việc phân loại các bài viết knowledge
+model KnowledgeCategory {
+  id          String                           @id @default(cuid())
+  name        String                           @unique
+  slug        String                           @unique
+  description String?
+  color       String?                          @default("#000000")
+  icon        String?
+  order       Int                              @default(0)
+  createdAt   DateTime                         @default(now())
+  updatedAt   DateTime                         @updatedAt
+  knowledge   KnowledgeCategoriesOnKnowledge[]
+
+  @@index([slug])
+  @@index([order])
+  @@map("KnowledgeCategories")
+}
+
+/// *
+///  * KnowledgeTag - Tags for knowledge articles (flexible tagging system)
+///  * Tags giúp người dùng tìm kiếm và filter bài viết
+model KnowledgeTag {
+  id                String                     @id @default(cuid())
+  name              String                     @unique
+  slug              String                     @unique
+  color             String?                    @default("#666666")
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+  knowledgeArticles KnowledgeTagsOnKnowledge[]
+
+  @@index([slug])
+  @@map("KnowledgeTags")
+}
+
+/// *
+///  * Knowledge - Main knowledge base article model
+///  * Lưu trữ các bài viết blog/wiki với đầy đủ metadata
+model Knowledge {
+  id             String                           @id @default(cuid())
+  title          String
+  slug           String                           @unique
+  content        String                           @db.Text
+  excerpt        String?                          @db.Text
+  thumbnail      String?                          @db.Text
+  type           String                           @default("knowledge")
+  visibility     String                           @default("public")
+  viewCount      Int                              @default(0)
+  isPublished    Boolean                          @default(false)
+  publishedAt    DateTime?
+  createdAt      DateTime                         @default(now())
+  updatedAt      DateTime                         @updatedAt
+  metaData       Json?
+  assignedGroups KnowledgeAssignedGroup[]
+  assignedUsers  KnowledgeAssignedUser[]
+  categories     KnowledgeCategoriesOnKnowledge[]
+  emailLogs      KnowledgeEmailLog[]
+  tags           KnowledgeTagsOnKnowledge[]
+  events         KnowledgeEventsOnKnowledge[]
+  vectors        KnowledgeVector[]                @relation("KnowledgeVectors")
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([type])
+  @@index([visibility])
+  @@index([createdAt])
+  @@map("KnowledgeArticles")
+}
+
+/// *
+///  * KnowledgeCategoriesOnKnowledge - Junction table for many-to-many relationship
+///  * Links Knowledge articles with Categories
+model KnowledgeCategoriesOnKnowledge {
+  knowledgeId String
+  categoryId  String
+  assignedAt  DateTime          @default(now())
+  category    KnowledgeCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "KnowledgeCategoriesOnKnowledge_categoryId_fkey")
+  knowledge   Knowledge         @relation(fields: [knowledgeId], references: [id], onDelete: Cascade, map: "KnowledgeCategoriesOnKnowledge_knowledgeId_fkey")
+
+  @@id([knowledgeId, categoryId])
+  @@index([categoryId], map: "KnowledgeCategoriesOnKnowledge_categoryId_idx")
+  @@map("KnowledgeCategoriesOnKnowledge")
+}
+
+/// *
+///  * KnowledgeTagsOnKnowledge - Junction table for many-to-many relationship
+///  * Links Knowledge articles with Tags
+model KnowledgeTagsOnKnowledge {
+  knowledgeId String
+  tagId       String
+  assignedAt  DateTime     @default(now())
+  knowledge   Knowledge    @relation(fields: [knowledgeId], references: [id], onDelete: Cascade, map: "KnowledgeTagsOnKnowledge_knowledgeId_fkey")
+  tag         KnowledgeTag @relation(fields: [tagId], references: [id], onDelete: Cascade, map: "KnowledgeTagsOnKnowledge_tagId_fkey")
+
+  @@id([knowledgeId, tagId])
+  @@index([tagId], map: "KnowledgeTagsOnKnowledge_tagId_idx")
+  @@map("KnowledgeTagsOnKnowledge")
+}
+
+/// *
+///  * KnowledgeEventsOnKnowledge - Junction table for many-to-many relationship
+///  * Links Knowledge articles with Events
+model KnowledgeEventsOnKnowledge {
+  knowledgeId String
+  eventId     String
+  assignedAt  DateTime  @default(now())
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  knowledge   Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade)
+
+  @@id([knowledgeId, eventId])
+  @@index([eventId])
+  @@map("KnowledgeEventsOnKnowledge")
+}
+
+/// *
+///  * KnowledgeAssignedUser - Junction table for private article access
+///  * Links Knowledge articles with Users who can access private articles
+model KnowledgeAssignedUser {
+  id          String    @id @default(cuid())
+  knowledgeId String
+  userId      String
+  assignedAt  DateTime  @default(now())
+  assignedBy  String?
+  knowledge   Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade, map: "KnowledgeAssignedUsers_knowledgeId_fkey")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "KnowledgeAssignedUsers_userId_fkey")
+
+  @@unique([knowledgeId, userId])
+  @@index([userId], map: "KnowledgeAssignedUsers_userId_idx")
+  @@map("KnowledgeAssignedUsers")
+}
+
+/// *
+///  * KnowledgeAssignedGroup - Junction table for private article access via groups
+///  * Links Knowledge articles with UserGroups who can access private articles
+model KnowledgeAssignedGroup {
+  id          String    @id @default(cuid())
+  knowledgeId String
+  groupId     String
+  assignedAt  DateTime  @default(now())
+  assignedBy  String?
+  group       UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade, map: "KnowledgeAssignedGroup_groupId_fkey")
+  knowledge   Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade, map: "KnowledgeAssignedGroup_knowledgeId_fkey")
+
+  @@unique([knowledgeId, groupId], map: "KnowledgeAssignedGroup_knowledgeId_groupId_key")
+  @@index([groupId], map: "KnowledgeAssignedGroup_groupId_idx")
+  @@map("KnowledgeAssignedGroups")
+}
+
+/// *
+///  * KnowledgeModuleType - Module types for Knowledge in Profile Builder
+///  * Defines fields that can be displayed in user profile modules
+///  * System: "knowledge" with keys like "knowledge_article_preview", "knowledge_featured", etc.
+model KnowledgeModuleType {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  system      String   @default("knowledge")
+  description String?
+  icon        String?
+  fieldSchema Json?
+  isEnabled   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([system])
+  @@index([key])
+  @@map("KnowledgeModuleTypes")
+}
+
+/// *
+///  * KnowledgeEmailLog - Tracks emails sent when articles are assigned to users/groups
+///  * Prevents duplicate emails and maintains history of notifications
+model KnowledgeEmailLog {
+  id              String    @id @default(cuid())
+  knowledgeId     String
+  recipientId     String
+  subject         String
+  recipient_email String
+  type            String
+  sentAt          DateTime
+  status          String
+  errorMessage    String?
+  triggeredBy     String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  knowledge       Knowledge @relation(fields: [knowledgeId], references: [id], onDelete: Cascade)
+  recipient       User      @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@unique([knowledgeId, recipientId, sentAt])
+  @@index([knowledgeId])
+  @@index([recipientId])
+  @@index([status])
+  @@index([sentAt])
+  @@map("KnowledgeEmailLogs")
+}
+
+/// *
+///  * PostCategory - Categories for post articles
+///  * Gốc cho việc phân loại các bài viết post
+model PostCategory {
+  id          String                 @id @default(cuid())
+  name        String
+  slug        String
+  description String?
+  type        String                 @default("blog")
+  color       String?                @default("#000000")
+  icon        String?
+  order       Int                    @default(0)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  posts       PostCategoriesOnPost[]
+
+  @@unique([name, type])
+  @@unique([slug, type])
+  @@index([slug])
+  @@index([order])
+  @@index([type])
+  @@map("PostCategories")
+}
+
+/// *
+///  * PostTag - Tags for post articles (flexible tagging system)
+///  * Tags giúp người dùng tìm kiếm và filter bài viết
+model PostTag {
+  id        String           @id @default(cuid())
+  name      String
+  slug      String
+  type      String           @default("blog")
+  color     String?          @default("#666666")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  posts     PostTagsOnPost[]
+
+  @@unique([name, type])
+  @@unique([slug, type])
+  @@index([slug])
+  @@index([type])
+  @@map("PostTags")
+}
+
+/// *
+///  * Post - Main post article model
+///  * Lưu trữ các bài viết blog với đầy đủ metadata
+model Post {
+  id          String                 @id @default(cuid())
+  title       String
+  slug        String                 @unique
+  content     String                 @db.Text
+  excerpt     String?                @db.Text
+  thumbnail   String?                @db.Text
+  type        String                 @default("blog")
+  visibility  String                 @default("public")
+  viewCount   Int                    @default(0)
+  isPublished Boolean                @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  categories  PostCategoriesOnPost[]
+  tags        PostTagsOnPost[]
+  speakerEvents EventSpeakersOnPosts[]
+  sponsorEvents EventSponsorsOnPosts[]
+  metaData    Json
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([type])
+  @@index([visibility])
+  @@index([createdAt])
+  @@map("Posts")
+}
+
+/// *
+///  * PostCategoriesOnPost - Junction table for many-to-many relationship
+///  * Links Post articles with Categories
+model PostCategoriesOnPost {
+  postId     String
+  categoryId String
+  assignedAt DateTime     @default(now())
+  category   PostCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, map: "PostCategoriesOnPost_categoryId_fkey")
+  post       Post         @relation(fields: [postId], references: [id], onDelete: Cascade, map: "PostCategoriesOnPost_postId_fkey")
+
+  @@id([postId, categoryId])
+  @@index([categoryId], map: "PostCategoriesOnPost_categoryId_idx")
+  @@map("PostCategoriesOnPost")
+}
+
+/// *
+///  * PostTagsOnPost - Junction table for many-to-many relationship
+///  * Links Post articles with Tags
+model PostTagsOnPost {
+  postId     String
+  tagId      String
+  assignedAt DateTime @default(now())
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade, map: "PostTagsOnPost_postId_fkey")
+  tag        PostTag  @relation(fields: [tagId], references: [id], onDelete: Cascade, map: "PostTagsOnPost_tagId_fkey")
+
+  @@id([postId, tagId])
+  @@index([tagId], map: "PostTagsOnPost_tagId_idx")
+  @@map("PostTagsOnPost")
+}
+
+/// *
+///  * EventSpeakersOnPosts - Junction table for many-to-many relationship
+///  * Links Event articles with Speaker Posts
+model EventSpeakersOnPosts {
+  eventId    String
+  postId     String
+  assignedAt DateTime @default(now())
+  assignedBy String?
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, map: "EventSpeakersOnPosts_eventId_fkey")
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade, map: "EventSpeakersOnPosts_postId_fkey")
+
+  @@id([eventId, postId])
+  @@index([eventId], map: "EventSpeakersOnPosts_eventId_idx")
+  @@index([postId], map: "EventSpeakersOnPosts_postId_idx")
+  @@map("EventSpeakersOnPosts")
+}
+
+/// *
+///  * EventSponsorsOnPosts - Junction table for many-to-many relationship
+///  * Links Event articles with Sponsor Posts
+model EventSponsorsOnPosts {
+  eventId    String
+  postId     String
+  assignedAt DateTime @default(now())
+  assignedBy String?
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, map: "EventSponsorsOnPosts_eventId_fkey")
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade, map: "EventSponsorsOnPosts_postId_fkey")
+
+  @@id([eventId, postId])
+  @@index([eventId], map: "EventSponsorsOnPosts_eventId_idx")
+  @@index([postId], map: "EventSponsorsOnPosts_postId_idx")
+  @@map("EventSponsorsOnPosts")
+}
+
+model BackupRecord {
+  id            String          @id @default(cuid())
+  fileName      String          @db.VarChar(255)
+  fileSize      BigInt          @default(0)
+  status        BackupStatus   @default(PENDING)
+  createdAt     DateTime     @default(now())
+  completedAt   DateTime?
+  errorMessage  String?      @db.Text
+  uploadedBy    String
+  r2Url         String?      @db.VarChar(500)
+  backupType    BackupType   @default(MANUAL)
+  retentionDays Int          @default(30)
+
+  @@index([backupType])
+  @@index([createdAt])
+  @@index([status])
+  @@map("BackupRecords")
+}
+
+model BackupStats {
+  id                String    @id @default(cuid())
+  totalBackups      Int       @default(0)
+  successfulBackups Int       @default(0)
+  failedBackups     Int       @default(0)
+  totalSize         BigInt    @default(0)
+  lastBackupDate    DateTime?
+  updatedAt         DateTime  @default(now()) @updatedAt
+
+  @@map("BackupStats")
+}
+
+model BackupSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique @db.VarChar(255)
+  value       String   @db.Text
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@index([key])
+  @@map("BackupSettings")
+}
+
+/// *
+///  * Event - Main event model for ticketing and attendee management
+///  * Supports internal/external/hybrid ticketing modes
+///  * Two types: with_sessions (agenda) or landing_only (no public content)
+model Event {
+  id                     String                       @id @default(cuid())
+  title                  String
+  slug                   String                       @unique
+  description            String                       @db.Text
+  startDate              DateTime
+  endDate                DateTime
+  location               String?
+  capacity               Int?
+  status                 EventStatus                @default(DRAFT)
+  eventType              EventType                    @default(WITH_SESSIONS)
+  ticketingMode          TicketingMode                @default(INTERNAL)
+  externalTicketUrl      String?
+  externalTicketProvider String?
+  thumbnailId            String?
+  enableCheckIn          Boolean                      @default(true)
+  metaData               Json?
+  createdById            String
+  updatedById            String
+  createdAt              DateTime                     @default(now())
+  updatedAt              DateTime                     @updatedAt
+  createdBy              User                         @relation("EventCreatedBy", fields: [createdById], references: [id])
+  updatedBy              User                         @relation("EventUpdatedBy", fields: [updatedById], references: [id])
+  thumbnail              Media?                       @relation(fields: [thumbnailId], references: [id])
+  sessions               EventSession[]
+  ticketTypes            TicketType[]
+  registrations          Registration[]
+  knowledge              KnowledgeEventsOnKnowledge[]
+  microsite              EventMicrosite?
+  sponsorMaterials       SponsorMaterial[]
+  speakerPosts           EventSpeakersOnPosts[]
+  sponsorPosts           EventSponsorsOnPosts[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([eventType])
+  @@index([ticketingMode])
+  @@index([startDate])
+  @@index([createdAt])
+}
+
+/// *
+///  * EventSession - Sessions within an event (only for eventType: WITH_SESSIONS)
+///  * Represents individual sessions like workshops, talks, etc.
+model EventSession {
+  id          String   @id @default(cuid())
+  eventId     String
+  title       String
+  description String?  @db.Text
+  startTime   DateTime
+  endTime     DateTime
+  speaker     String?
+  capacity    Int?
+  room        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([startTime])
+}
+
+/// *
+///  * TicketType - Types of tickets available for an event (internal/hybrid only)
+///  * Defines pricing, quantity, and sale periods
+model TicketType {
+  id          String    @id @default(cuid())
+  eventId     String
+  name        String
+  description String?
+  price       Float
+  quantity    Int
+  maxPerUser  Int       @default(1)
+  saleStart   DateTime?
+  saleEnd     DateTime?
+  isActive    Boolean   @default(true)
+  isExternal  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets     Ticket[]
+
+  @@index([eventId])
+  @@index([isActive])
+}
+
+/// *
+///  * Payment - Tracks user payment history for events
+///  * Stores payment details for auditing and refunds
+model Payment {
+  id            String             @id @default(cuid())
+  userId        String
+  amount        Float
+  currency      String             @default("USD")
+  status        PaymentStatus  @default(PENDING)
+  paymentMethod String?
+  paymentId     String? // External provider ID
+  description   String?
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tickets       Ticket[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// *
+///  * Ticket - Individual tickets purchased (internal/hybrid only)
+///  * Links to payment and user, with QR for check-in
+model Ticket {
+  id             String        @id @default(cuid())
+  ticketTypeId   String
+  userId         String
+  qrCode         String        @unique
+  status         TicketStatus  @default(SOLD)
+  purchasedAt    DateTime      @default(now())
+  usedAt         DateTime?
+  paymentId      String?
+  registrationId String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  ticketType     TicketType    @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment        Payment?      @relation(fields: [paymentId], references: [id])
+  registration   Registration? @relation(fields: [registrationId], references: [id])
+
+  @@index([ticketTypeId])
+  @@index([userId])
+  @@index([qrCode])
+  @@index([status])
+}
+
+/// *
+///  * Registration - Core registration for all event modes
+///  * Tracks attendees, status, and custom data
+model Registration {
+  id               String          @id @default(cuid())
+  eventId          String
+  userId           String?
+  status           RegistrationStatus   @default(PENDING)
+  ticketSource     TicketSource       @default(INTERNAL)
+  externalTicketId String?
+  customData       Json?
+  registeredAt     DateTime           @default(now())
+  checkedInAt      DateTime?
+  checkedInById    String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  event            Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user             User?              @relation(fields: [userId], references: [id])
+  checkedInBy      User?              @relation("RegistrationCheckedInBy", fields: [checkedInById], references: [id])
+  checkIns         CheckIn[]
+  tickets          Ticket[]
+
+  @@index([eventId])
+  @@index([userId])
+  @@index([status])
+  @@index([registeredAt])
+}
+
+/// *
+///  * CheckIn - Records for check-in events
+///  * Optional based on enableCheckIn flag
+model CheckIn {
+  id             String       @id @default(cuid())
+  registrationId String
+  checkedInAt    DateTime     @default(now())
+  checkedInById  String
+  location       String?
+  deviceInfo     Json?
+  createdAt      DateTime     @default(now())
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  checkedInBy    User         @relation(fields: [checkedInById], references: [id])
+
+  @@index([registrationId])
+  @@index([checkedInAt])
+}
+
+model Contact {
+  id         String   @id @default(cuid())
+  customerId String // Liên kết với Customer hiện có
+  firstName  String
+  lastName   String
+  email      String   @unique
+  phone      String?
+  title      String?
+  isPrimary  Boolean  @default(false)
+  tags       String? // JSON array of tags
+  metaData   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  createdBy  String?
+  updatedBy  String?
+
+  customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  testOrders TestOrder[] // Test orders where this contact is the primary contact
+  trainingEngagements TrainingEngagement[] // Training engagements where this contact is the primary contact
+  trainingRegistrations TrainingRegistration[] // Training registrations for this contact
+  
+  @@index([customerId])
+  @@index([email])
+}
+
+model Opportunity {
+  id            String           @id @default(cuid())
+  customerId    String // Liên kết với Customer hiện có
+  title         String
+  description   String?
+  value         Float?
+  stage         OpportunityStage @default(PROSPECTING)
+  probability   Int?             @default(0)
+  expectedClose DateTime?
+  ownerId       String
+  source        String?
+  metaData      Json?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  customer    Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  owner       User         @relation("OpportunityOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  engagements Engagement[]
+
+  @@index([customerId])
+  @@index([stage])
+  @@index([ownerId])
+}
+
+model Engagement {
+  id            String          @id @default(cuid())
+  opportunityId String?
+  customerId    String // Liên kết với Customer hiện có
+  title         String
+  type          EngagementType // DESIGN, TESTING, TRAINING, EVENT
+  status        EngagementStatus   @default(DRAFT)
+  priority      String?          @default("MEDIUM")
+  startDate     DateTime?
+  dueDate       DateTime?
+  completedAt   DateTime?
+  budget        Float?
+  description   String?
+  assignedTo    String? // User ID
+  metaData      Json?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  createdBy     String?
+  updatedBy     String?
+
+  opportunity    Opportunity?    @relation(fields: [opportunityId], references: [id])
+  customer       Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  testOrders     TestOrder[] // For testing engagements
+  designProjects DesignProject[] // For design engagements
+  trainingEngagements TrainingEngagement[] // For training engagements
+
+  @@index([customerId])
+  @@index([type])
+  @@index([status])
+  @@index([assignedTo])
+}
+
+model Interaction {
+  id           String          @id @default(cuid())
+  customerId   String? // Liên kết với Customer hiện có
+  contactId    String?
+  testOrderId  String? // Liên kết với TestOrder để log testing discussions
+  type         InteractionType // MEETING, CALL, EMAIL, NOTE
+  subject      String
+  description  String?
+  date         DateTime
+  duration     Int? // minutes
+  participants String? // JSON array
+  outcome      String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  createdBy    String?
+  updatedBy    String?
+
+  testOrder TestOrder? @relation(fields: [testOrderId], references: [id])
+
+  @@index([customerId])
+  @@index([contactId])
+  @@index([testOrderId])
+  @@index([type])
+  @@index([date])
+}
+
+model Task {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  // Generic entity linking
+  entityType String // ENGAGEMENT, TEST_ORDER, TRAINING_SESSION, SUPPORT_TICKET, etc.
+  entityId   String // ID của entity tương ứng
+
+  status      TaskStatus @default(TODO)
+  priority    String     @default("MEDIUM")
+  assignedTo  String?
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  // Task-specific fields
+  taskType String? // TESTING_SAMPLE, TRAINING_MODULE, SUPPORT_ISSUE, etc.
+  category String? // For filtering/grouping
+  tags     String? // JSON array
+
+  // Workflow fields
+  parentTaskId String? // For subtasks
+  order        Int     @default(0) // For kanban ordering
+
+  metaData  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  // Relations
+  parentTask Task?  @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
+  subtasks   Task[] @relation("TaskHierarchy")
+
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([dueDate])
+  @@index([taskType])
+  @@index([category])
+}
+
+model TestOrder {
+  id           String          @id @default(cuid())
+  engagementId String
+  title        String
+  description  String?
+  status       TestOrderStatus   @default(DRAFT)
+  priority     String          @default("MEDIUM")
+  requestedBy  String // User ID
+  assignedTo   String? // User ID
+  contactId    String? // Contact ID - Primary contact for this test order
+  startDate    DateTime?
+  dueDate      DateTime?
+  completedAt  DateTime?
+  budget       Float?
+  notes        String?
+  metaData     Json?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  createdBy    String?
+  updatedBy    String?
+
+  engagement   Engagement         @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  contact      Contact?           @relation(fields: [contactId], references: [id])
+  samples      Sample[]
+  testSuites   TestSuiteOnOrder[]
+  tests        Test[]
+  reports      TestReport[]
+  interactions Interaction[] // Related interactions/discussions
+
+  @@index([engagementId])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([contactId])
+  @@index([dueDate])
+}
+
+model Sample {
+  id              String       @id @default(cuid())
+  testOrderId     String
+  name            String
+  description     String?
+  type            SampleType   @default(PHYSICAL)
+  quantity        Int          @default(1)
+  receivedDate    DateTime?
+  receivedFrom    String?
+  storageLocation String?
+  condition       String?
+  status          SampleStatus @default(RECEIVED)
+  notes           String?
+  mediaIds        String? // JSON array of Media IDs
+  metaData        Json?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  testOrder TestOrder @relation(fields: [testOrderId], references: [id], onDelete: Cascade)
+  tests     Test[]
+
+  @@index([testOrderId])
+  @@index([status])
+}
+
+model TestSuite {
+  id             String   @id @default(cuid())
+  name           String
+  description    String?
+  category       String?
+  isActive       Boolean  @default(true)
+  estimatedHours Float?
+  metaData       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      String?
+  updatedBy      String?
+
+  orders TestSuiteOnOrder[]
+  tests  Test[]
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model TestSuiteOnOrder {
+  id          String   @id @default(cuid())
+  testOrderId String
+  testSuiteId String
+  assignedAt  DateTime @default(now())
+  assignedBy  String?
+
+  testOrder TestOrder @relation(fields: [testOrderId], references: [id], onDelete: Cascade)
+  testSuite TestSuite @relation(fields: [testSuiteId], references: [id], onDelete: Cascade)
+
+  @@unique([testOrderId, testSuiteId])
+  @@index([testOrderId])
+  @@index([testSuiteId])
+}
+
+model Test {
+  id             String     @id @default(cuid())
+  testOrderId    String?
+  testSuiteId    String?
+  sampleId       String?
+  name           String
+  description    String?
+  method         String?
+  parameters     Json? // Test parameters
+  expectedResult String?
+  actualResult   String?
+  status         TestStatus @default(PENDING)
+  startedAt      DateTime?
+  completedAt    DateTime?
+  performedBy    String? // User ID
+  notes          String?
+  data           Json? // Captured test data
+  mediaIds       String? // JSON array of Media IDs
+  metaData       Json?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  createdBy      String?
+  updatedBy      String?
+
+  testOrder TestOrder? @relation(fields: [testOrderId], references: [id], onDelete: Cascade)
+  testSuite TestSuite? @relation(fields: [testSuiteId], references: [id])
+  sample    Sample?    @relation(fields: [sampleId], references: [id])
+
+  @@index([testOrderId])
+  @@index([status])
+  @@index([performedBy])
+}
+
+model TestReport {
+  id              String       @id @default(cuid())
+  testOrderId     String
+  title           String
+  summary         String?
+  findings        String?        @db.Text
+  recommendations String?        @db.Text
+  status          ReportStatus  @default(DRAFT)
+  version         Int          @default(1)
+  generatedAt     DateTime?
+  approvedAt      DateTime?
+  approvedBy      String?
+  publishedAt     DateTime?
+  mediaId         String? // PDF report file
+  metaData        Json?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  testOrder TestOrder @relation(fields: [testOrderId], references: [id], onDelete: Cascade)
+
+  @@index([testOrderId])
+  @@index([status])
+  @@index([publishedAt])
+}
+
+// ============================================================================
+// DESIGN x DEVELOPMENT MODELS
+// ============================================================================
+
+/// *
+/// DesignProject - Main container for design engagement
+/// Linked to Engagement (type: DESIGN)
+/// Similar to TestOrder in Testing vertical
+model DesignProject {
+  id           String              @id @default(cuid())
+  engagementId String
+  customerId   String
+  title        String
+  description  String?
+  status       DesignProjectStatus @default(DRAFT)
+  priority     String              @default("MEDIUM")
+  requestedBy  String
+  assignedTo   String?
+  startDate    DateTime?
+  dueDate      DateTime?
+  completedAt  DateTime?
+  budget       Float?
+  metaData     Json?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  createdBy    String?
+  updatedBy    String?
+
+  engagement Engagement      @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  customer   Customer        @relation("DesignProjects", fields: [customerId], references: [id], onDelete: Cascade)
+  brief      DesignBrief?
+  designs    ProductDesign[]
+  deck       DesignDeck?
+  reviews    DesignReview[]
+
+  @@index([engagementId])
+  @@index([customerId])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([dueDate])
+  @@index([createdAt])
+}
+
+/// *
+/// DesignBrief - Intake form and requirements
+/// One brief per project, captures all initial requirements
+model DesignBrief {
+  id              String            @id @default(cuid())
+  designProjectId String            @unique
+  brandAssets     String?
+  targetAudience  String?
+  constraints     String?
+  inspirations    String?
+  deliverables    String?
+  budget          Float?
+  timeline        String?
+  notes           String?            @db.Text
+  mediaIds        String?
+  status          DesignBriefStatus     @default(DRAFT)
+  approvedAt      DateTime?
+  approvedBy      String?
+  metaData        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  designProject DesignProject @relation(fields: [designProjectId], references: [id], onDelete: Cascade)
+
+  @@index([designProjectId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// *
+/// ProductDesign - Individual design for a product
+/// Can have multiple versions/iterations
+/// Links to single TechPack when approved
+model ProductDesign {
+  id                 String              @id @default(cuid())
+  designProjectId    String
+  name               String
+  description        String?
+  designType         String          @default("GRAPHIC")
+  productType        String?
+  mockupUrl          String?
+  graphicSpecsFile   String?
+  layerInfo          Json?
+  colorSeparations   String?
+  status             ProductDesignStatus   @default(DRAFT)
+  feasibilityNotes   String?             @db.Text
+  compatibilityCheck Boolean             @default(false)
+  decorationDetails  Json?
+  mediaIds           String?
+  version            Int                 @default(1)
+  parentDesignId     String?
+  assignedTo         String?
+  startedAt          DateTime?
+  completedAt        DateTime?
+  metaData           Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  createdBy          String?
+  updatedBy          String?
+
+  designProject DesignProject   @relation(fields: [designProjectId], references: [id], onDelete: Cascade)
+  parentDesign  ProductDesign?  @relation("DesignVersions", fields: [parentDesignId], references: [id])
+  versions      ProductDesign[] @relation("DesignVersions")
+  techPack      TechPack?
+  reviews       DesignReview[]
+
+  @@index([designProjectId])
+  @@index([status])
+  @@index([designType])
+  @@index([productType])
+  @@index([assignedTo])
+  @@index([parentDesignId])
+  @@index([createdAt])
+}
+
+/// *
+/// TechPack - Manufacturing specifications and output files
+/// Created from approved ProductDesign
+/// Contains sizing, materials, production specs, output files
+model TechPack {
+  id               String         @id @default(cuid())
+  productDesignId  String         @unique
+  name             String
+  description      String?
+  sizing           Json?
+  materials        Json?
+  colors           Json?
+  decorationMethod String
+  productionNotes  String?        @db.Text
+  qualitySpecs     Json?
+  outputFiles      String?        @db.Text
+  status           TechPackStatus  @default(DRAFT)
+  approvedAt       DateTime?
+  approvedBy       String?
+  metaData         Json?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  createdBy        String?
+  updatedBy        String?
+
+  productDesign ProductDesign @relation(fields: [productDesignId], references: [id], onDelete: Cascade)
+
+  @@index([productDesignId])
+  @@index([status])
+  @@index([decorationMethod])
+  @@index([approvedAt])
+  @@index([createdAt])
+}
+
+/// *
+/// DesignDeck - Collection and presentation of approved designs
+/// One main deck per project
+/// Contains references to selected designs and documentation
+model DesignDeck {
+  id              String           @id @default(cuid())
+  designProjectId String           @unique
+  title           String
+  description     String?
+  coverUrl        String?
+  designIds       String?
+  deckUrl         String?
+  mediaIds        String?
+  status          DesignDeckStatus @default(DRAFT)
+  publishedAt     DateTime?
+  publishedBy     String?
+  version         Int              @default(1)
+  notes           String?
+  metaData        Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  designProject DesignProject @relation(fields: [designProjectId], references: [id], onDelete: Cascade)
+
+  @@index([designProjectId])
+  @@index([status])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
+
+/// *
+///  * Training x Support Models
+model TrainingEngagement {
+  id                 String                 @id @default(cuid())
+  engagementId       String                 @unique
+  customerId         String
+  title              String
+  description        String?                @db.Text
+  trainingType       TrainingType           @default(INSTRUCTOR_LED)
+  deliveryMethod     DeliveryMethod         @default(HYBRID)
+  startDate          DateTime?
+  endDate            DateTime?
+  totalDurationHours Float?
+  targetAudience     String?
+  maxParticipants    Int?
+  minParticipants    Int?
+  status             TrainingStatus          @default(DRAFT)
+  phase              TrainingPhase          @default(DISCOVERY)
+  certificationLevel CertificationLevel     @default(NONE)
+  requestedBy        String
+  requestedByUserId  String?
+  instructorId       String?
+  coordinatorId      String?
+  contactId          String?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdBy          String?
+  updatedBy          String?
+  metaData           Json?
+  
+  engagement         Engagement             @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+  customer           Customer               @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  contact            Contact?               @relation(fields: [contactId], references: [id])
+  instructor         User?                  @relation("TrainingEngagementInstructor", fields: [instructorId], references: [id])
+  coordinator        User?                  @relation("TrainingEngagementCoordinator", fields: [coordinatorId], references: [id])
+  requestedByUser    User?                  @relation("TrainingEngagementRequestedBy", fields: [requestedByUserId], references: [id])
+  sessions           TrainingSession[]
+  assessments        Assessment[]
+  implementationPlan ImplementationPlan?
+  reports             TrainingReport[]
+  registrations      TrainingRegistration[]
+  
+  @@index([engagementId])
+  @@index([customerId])
+  @@index([status])
+  @@index([phase])
+  @@index([instructorId])
+  @@index([startDate])
+  @@index([completedAt])
+}
+
+/// *
+///  * TrainingRegistration - Core registration for training engagements
+///  * Tracks attendees, status, and custom data
+model TrainingRegistration {
+  id                    String          @id @default(cuid())
+  trainingEngagementId  String
+  userId                String?
+  contactId             String?
+  status                RegistrationStatus   @default(PENDING)
+  registrationSource    TicketSource          @default(INTERNAL)
+  externalRegistrationId String?
+  customData            Json?
+  registeredAt          DateTime              @default(now())
+  checkedInAt           DateTime?
+  checkedInById         String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  trainingEngagement    TrainingEngagement    @relation(fields: [trainingEngagementId], references: [id], onDelete: Cascade)
+  user                  User?                 @relation(fields: [userId], references: [id])
+  contact               Contact?              @relation(fields: [contactId], references: [id])
+  checkedInBy           User?                 @relation("TrainingRegistrationCheckedInBy", fields: [checkedInById], references: [id])
+  checkIns              TrainingCheckIn[]
+
+  @@index([trainingEngagementId])
+  @@index([userId])
+  @@index([contactId])
+  @@index([status])
+  @@index([registeredAt])
+  @@unique([trainingEngagementId, userId])
+  @@unique([trainingEngagementId, contactId])
+}
+
+/// *
+///  * TrainingCheckIn - Records for training check-in events
+///  * Optional based on enableCheckIn flag
+model TrainingCheckIn {
+  id                    String                @id @default(cuid())
+  trainingRegistrationId String
+  trainingSessionId     String?
+  checkedInAt           DateTime              @default(now())
+  checkedInById         String
+  location              String?
+  deviceInfo            Json?
+  createdAt             DateTime              @default(now())
+  trainingRegistration  TrainingRegistration  @relation(fields: [trainingRegistrationId], references: [id], onDelete: Cascade)
+  trainingSession       TrainingSession?      @relation(fields: [trainingSessionId], references: [id])
+  checkedInBy           User                  @relation(fields: [checkedInById], references: [id])
+
+  @@index([trainingRegistrationId])
+  @@index([trainingSessionId])
+  @@index([checkedInAt])
+}
+
+model TrainingSession {
+  id                    String            @id @default(cuid())
+  trainingEngagementId  String
+  title                 String
+  description           String?           @db.Text
+  sessionNumber         Int
+  deliveryMethod        DeliveryMethod    @default(HYBRID)
+  duration              Float
+  contentUrl            String?
+  location              String?
+  startDate             DateTime
+  endDate               DateTime
+  instructorId          String?
+  maxCapacity           Int?
+  status                SessionStatus     @default(PLANNED)
+  sopLibraryIds         String?
+  hasPreAssessment      Boolean           @default(false)
+  hasPostAssessment     Boolean           @default(false)
+  preRequisiteLevel     CompetencyLevel?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  recordedUrl           String?
+  createdBy             String?
+  updatedBy             String?
+  metaData              Json?
+  
+  trainingEngagement    TrainingEngagement @relation(fields: [trainingEngagementId], references: [id], onDelete: Cascade)
+  assessments           Assessment[]
+  checkIns              TrainingCheckIn[]
+  
+  @@index([trainingEngagementId])
+  @@index([startDate])
+  @@index([status])
+  @@index([instructorId])
+  @@unique([trainingEngagementId, sessionNumber])
+}
+
+model Assessment {
+  id                    String            @id @default(cuid())
+  trainingEngagementId  String
+  trainingSessionId     String?
+  title                 String
+  description           String?           @db.Text
+  assessmentType        AssessmentType    @default(QUIZ)
+  administrationTiming  TimingType        @default(POST)
+  dueDate               DateTime?
+  questions             String?
+  passingScore          Float?
+  status                AssessmentStatus     @default(PENDING)
+  score                 Float?
+  competencyLevel       CompetencyLevel?
+  feedback              String?
+  reviewedAt            DateTime?
+  reviewedBy            String?
+  attachmentIds         String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  takenAt               DateTime?
+  createdBy             String?
+  updatedBy             String?
+  metaData              Json?
+  
+  trainingEngagement    TrainingEngagement @relation(fields: [trainingEngagementId], references: [id], onDelete: Cascade)
+  trainingSession       TrainingSession?  @relation(fields: [trainingSessionId], references: [id], onDelete: SetNull)
+  
+  @@index([trainingEngagementId])
+  @@index([assessmentType])
+  @@index([status])
+  @@index([competencyLevel])
+  @@index([takenAt])
+}
+
+model ImplementationPlan {
+  id                    String            @id @default(cuid())
+  trainingEngagementId  String            @unique
+  title                 String
+  description           String?           @db.Text
+  startDate             DateTime
+  endDate               DateTime
+  estimatedDurationDays Int?
+  goals                 String?           @db.Text
+  successCriteria       String?           @db.Text
+  applicableDepartments String?
+  applicableRoles       String?
+  status                PlanStatus     @default(DRAFT)
+  ownerUserId           String?
+  supportContactId      String?
+  totalTasks            Int               @default(0)
+  completedTasks        Int               @default(0)
+  progressPercentage    Float?
+  reviewedAt            DateTime?
+  reviewedBy            String?
+  approvedAt            DateTime?
+  approvedBy            String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  createdBy             String?
+  updatedBy             String?
+  metaData              Json?
+  
+  trainingEngagement    TrainingEngagement @relation(fields: [trainingEngagementId], references: [id], onDelete: Cascade)
+  
+  @@index([trainingEngagementId])
+  @@index([status])
+  @@index([endDate])
+}
+
+model SOPLibrary {
+  id                    String            @id @default(cuid())
+  title                 String
+  slug                  String            @unique
+  description           String?           @db.Text
+  category              String?
+  content               String            @db.Text
+  version               Int               @default(1)
+  versionNotes          String?
+  applicableDepartments String?
+  applicableRoles       String?
+  requiredCertifications String?
+  status                SOPStatus     @default(DRAFT)
+  effectiveDate         DateTime?
+  sunsetDate            DateTime?
+  attachmentIds         String?
+  coverImageId          String?
+  lastReviewedAt        DateTime?
+  lastReviewedBy        String?
+  reviewCycleMonths     Int               @default(12)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  createdBy             String?
+  updatedBy             String?
+  metaData              Json?
+  
+  @@index([slug])
+  @@index([category])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model TrainingReport {
+  id                    String            @id @default(cuid())
+  
+  // Links
+  trainingEngagementId  String            @unique  // One report per engagement
+  
+  // Report Info
+  title                 String
+  description           String?           @db.Text
+  reportType            ReportType        @default(COMPLETION)  // COMPLETION, COMPETENCY, CERTIFICATION
+  
+  // Engagement Summary
+  totalParticipants     Int?
+  totalAttended         Int?
+  completionRate        Float?            // % of participants who completed
+  averageScore          Float?
+  overallCompetency     CompetencyLevel?  // NOVICE, BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  
+  // Assessment Results
+  passedCount           Int               @default(0)
+  failedCount           Int               @default(0)
+  averageAttendance     Float?
+  
+  // Certification
+  certificationsIssued  Int               @default(0)
+  certificationTemplate String?           // Reference to certificate template
+  
+  // Key Findings
+  keyFindings           String?           @db.Text
+  recommendations       String?           @db.Text
+  successMetrics        Json?             // Custom success metrics
+  
+  // Status
+  status                ReportStatus      @default(DRAFT)  // DRAFT, REVIEW, APPROVED, PUBLISHED
+  publishedAt           DateTime?
+  publishedBy           String?
+  
+  // Media (certificates, PDFs)
+  reportFileId          String?           // Report PDF or export
+  certificatesFileId    String?           // Batch certificate file
+  
+  // Dates
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  reportDate            DateTime          @default(now())
+  
+  // Audit
+  createdBy             String?
+  updatedBy             String?
+  metaData              Json?
+  
+  // Relations
+  trainingEngagement    TrainingEngagement @relation(fields: [trainingEngagementId], references: [id], onDelete: Cascade)
+  
+  @@index([trainingEngagementId])
+}
+
+
+/// *
+/// DesignReview - Feedback and approval workflow
+/// Multiple reviews per design (by different stakeholders)
+/// Tracks reviewer feedback and approval status
+model DesignReview {
+  id              String             @id @default(cuid())
+  productDesignId String?
+  designProjectId String
+  reviewerName    String
+  reviewerEmail   String?
+  feedback        String?           @db.Text
+  approvalStatus  DesignReviewStatus    @default(DRAFT)
+  approvedAt      DateTime?
+  approvedBy      String?
+  requestedAt     DateTime?
+  requestedBy     String?
+  notes           String?
+  metaData        Json?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  createdBy       String?
+  updatedBy       String?
+
+  productDesign ProductDesign? @relation(fields: [productDesignId], references: [id], onDelete: Cascade)
+  designProject DesignProject @relation(fields: [designProjectId], references: [id], onDelete: Cascade)
+
+  @@index([productDesignId])
+  @@index([designProjectId])
+  @@index([approvalStatus])
+  @@index([reviewerEmail])
+  @@index([requestedAt])
+  @@index([createdAt])
+}
+
+/// *
+///  * Universal/Shared Enums - Simplified for easy management
+enum ProjectStatus {
+  DRAFT
+  INTAKE
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
+  ARCHIVED
+  ACTIVE
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProcessStatus {
+  PENDING
+  IN_PROGRESS
+  CONFIRMED
+  COMPLETED
+  FAILED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+/// *
+///  * Domain-Specific Enums (kept distinct for business logic)
+enum BackupType {
+  MANUAL
+  SCHEDULED
+}
+
+enum EventType {
+  WITH_SESSIONS
+  LANDING_ONLY
+}
+
+enum TicketingMode {
+  INTERNAL
+  EXTERNAL
+  HYBRID
+}
+
+enum TicketStatus {
+  SOLD
+  USED
+  REFUNDED
+  CANCELLED
+}
+
+enum TicketSource {
+  INTERNAL
+  EXTERNAL
+  MANUAL
+}
+
+enum OpportunityStage {
+  PROSPECTING
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum EngagementType {
+  DESIGN
+  TESTING
+  TRAINING
+  EVENT
+}
+
+enum InteractionType {
+  MEETING
+  CALL
+  EMAIL
+  NOTE
+}
+
+enum SampleType {
+  PHYSICAL
+  DIGITAL
+}
+
+enum SampleStatus {
+  RECEIVED
+  IN_PROCESSING
+  PROCESSED
+  RETURNED
+  DISPOSED
+}
+
+enum TrainingType {
+  INSTRUCTOR_LED
+  SELF_PACED
+  BLENDED
+  WORKSHOP
+  MENTORING
+  CERTIFICATION_PREP
+}
+
+enum DeliveryMethod {
+  IN_PERSON
+  ONLINE
+  HYBRID
+  ASYNCHRONOUS
+  RECORDED
+}
+
+enum TrainingPhase {
+  DISCOVERY
+  DESIGN
+  DEVELOPMENT
+  DELIVERY
+  ASSESSMENT
+  SUPPORT
+}
+
+enum CertificationLevel {
+  NONE
+  COMPLETION
+  COMPETENCY
+  EXTERNAL_ALIGNED
+}
+
+enum CompetencyLevel {
+  NOVICE
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum AssessmentType {
+  QUIZ
+  PRACTICAL
+  CERTIFICATION
+  SURVEY
+  SELF_ASSESSMENT
+}
+
+enum TimingType {
+  PRE
+  MID
+  POST
+}
+
+/// *
+///  * Domain-Specific Status Enums (with unique values per domain)
+///  * These are kept separate for clarity and to match business logic
+
+// Design vertical statuses
+enum DesignProjectStatus {
+  DRAFT
+  INTAKE
+  IN_PROGRESS
+  REVIEW
+  APPROVED
+  COMPLETED
+  CANCELLED
+  REJECTED
+  REVISION
+  ARCHIVED
+}
+
+enum DesignBriefStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  APPROVED
+  REVISION_REQUESTED
+  REJECTED
+}
+
+enum ProductDesignStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW
+  APPROVED
+  FINALIZED
+  CANCELLED
+  REJECTED
+  COMPLETED
+}
+
+enum TechPackStatus {
+  DRAFT
+  IN_PROGRESS
+  REVIEW
+  APPROVED
+  FINALIZED
+  CANCELLED
+  REJECTED
+  ARCHIVED
+}
+
+enum DesignDeckStatus {
+  DRAFT
+  PUBLISHED
+  IN_PROGRESS
+  REVIEW
+  ARCHIVED
+}
+
+enum DesignReviewStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  APPROVED
+  REVISION_REQUESTED
+  REJECTED
+  PENDING
+  CLOSED
+}
+
+// Testing vertical statuses
+enum TestOrderStatus {
+  DRAFT
+  INTAKE
+  IN_PROGRESS
+  REVIEW
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum TestStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  ON_HOLD
+}
+
+enum ReportStatus {
+  DRAFT
+  REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+// Training vertical statuses
+enum TrainingStatus {
+  DRAFT
+  INTAKE
+  IN_PROGRESS
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  PLANNING
+  DISCOVERY
+  DESIGN
+  SCHEDULED
+  ON_HOLD
+}
+
+enum SessionStatus {
+  PLANNED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AssessmentStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PASSED
+}
+
+enum PlanStatus {
+  DRAFT
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ReportType {
+  COMPLETION
+  COMPETENCY
+  CERTIFICATION
+}
+
+enum SOPStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// Event vertical statuses
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CANCELLED
+  NO_SHOW
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum BackupStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+// General/CRM statuses
+enum EngagementStatus {
+  DRAFT
+  INTAKE
+  IN_PROGRESS
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================================================
+// MARKETING MODULE
+// ============================================================================
+
+enum CampaignType {
+  EMAIL
+  SOCIAL
+  WEBINAR
+  NEWSLETTER
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  CANCELLED
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  BOUNCED
+  COMPLAINT
+}
+
+enum TemplateType {
+  GENERAL
+  EVENT_INVITATION
+  EVENT_REMINDER
+  NEWSLETTER
+  SPONSOR_UPDATE
+}
+
+enum MaterialType {
+  ASSET
+  LOGO
+  BANNER
+  PRESENTATION
+  CONTRACT
+  REPORT
+}
+
+enum MaterialStatus {
+  PENDING
+  SUBMITTED
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+}
+
+/// *
+//  * MarketingCampaign - Marketing campaigns (email, social, etc.)
+//  * Supports different campaign types with scheduling and tracking
+model MarketingCampaign {
+  id             String            @id @default(cuid())
+  title          String
+  description    String?           @db.Text
+  type           CampaignType      @default(EMAIL)
+  status         CampaignStatus    @default(DRAFT)
+  targetAudience String?           @db.Text
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  createdById    String
+  updatedById    String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  createdBy      User              @relation("MarketingCampaignCreatedBy", fields: [createdById], references: [id])
+  updatedBy      User              @relation("MarketingCampaignUpdatedBy", fields: [updatedById], references: [id])
+  emails         CampaignEmail[]
+  templates      CampaignTemplate[]
+
+  @@index([status])
+  @@index([type])
+  @@index([scheduledAt])
+}
+
+/// *
+//  * CampaignEmail - Individual emails within a campaign
+//  * Tracks delivery status and engagement metrics
+model CampaignEmail {
+  id             String         @id @default(cuid())
+  campaignId     String
+  subject        String
+  content        String         @db.Text
+  recipientEmail String
+  recipientName  String?
+  status         EmailStatus    @default(PENDING)
+  sentAt         DateTime?
+  openedAt       DateTime?
+  clickedAt      DateTime?
+  error          String?
+  sentById       String?
+  createdAt      DateTime       @default(now())
+
+  campaign       MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  sentBy         User?           @relation("CampaignEmailSentBy", fields: [sentById], references: [id])
+
+  @@index([campaignId])
+  @@index([recipientEmail])
+  @@index([status])
+}
+
+/// *
+//  * CampaignTemplate - Reusable email templates
+//  * Supports different template types for various marketing needs
+model CampaignTemplate {
+  id          String           @id @default(cuid())
+  name        String
+  subject     String
+  content     String           @db.Text
+  type        TemplateType     @default(GENERAL)
+  isActive    Boolean          @default(true)
+  createdById String
+  updatedById String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  createdBy   User             @relation("CampaignTemplateCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User             @relation("CampaignTemplateUpdatedBy", fields: [updatedById], references: [id])
+  campaigns   MarketingCampaign[]
+
+  @@index([type])
+  @@index([isActive])
+}
+
+/// *
+//  * EventMicrosite - Marketing content for event microsites
+//  * Public-facing marketing pages for events with rich content
+model EventMicrosite {
+  id            String     @id @default(cuid())
+  eventId       String     @unique
+  heroTitle     String
+  heroSubtitle  String?
+  heroImageId   String?
+  description   String     @db.Text
+  agenda        String?    @db.Text
+  speakers      String?    @db.Text
+  sponsors      String?    @db.Text
+  ctaText       String?
+  ctaUrl        String?
+  isPublished   Boolean    @default(false)
+  publishedAt   DateTime?
+  createdById   String
+  updatedById   String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  event         Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  heroImage     Media?     @relation(fields: [heroImageId], references: [id])
+  createdBy     User       @relation("EventMicrositeCreatedBy", fields: [createdById], references: [id])
+  updatedBy     User       @relation("EventMicrositeUpdatedBy", fields: [updatedById], references: [id])
+
+  @@index([eventId])
+  @@index([isPublished])
+}
+
+/// *
+//  * SponsorMaterial - Sponsor-related assets and deliverables
+//  * Tracks sponsor materials, deadlines, and approval status
+model SponsorMaterial {
+  id          String         @id @default(cuid())
+  eventId     String
+  sponsorId   String         // Links to Contact/Organization
+  title       String
+  description String?        @db.Text
+  type        MaterialType   @default(ASSET)
+  fileId      String?
+  url         String?
+  dueDate     DateTime?
+  status      MaterialStatus @default(PENDING)
+  notes       String?        @db.Text
+  createdById String
+  updatedById String
+  approvedById String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  file        Media?         @relation(fields: [fileId], references: [id])
+  createdBy   User           @relation("SponsorMaterialCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User           @relation("SponsorMaterialUpdatedBy", fields: [updatedById], references: [id])
+  approvedBy  User?          @relation("SponsorMaterialApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([eventId])
+  @@index([sponsorId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+/// *
+///  * KnowledgeVector - Vector embeddings for semantic search (RAG Foundation)
+///  * Stores embeddings of Knowledge article chunks for vector similarity search
+///  * Feature-flagged: Only used when RAG is enabled via Settings.rag_enabled
+///  * Non-breaking: Dormant until activation, supports future AI features
+model KnowledgeVector {
+  id              String    @id @default(cuid())
+  
+  // Legacy Knowledge support (for backward compatibility with existing data)
+  knowledgeId     String?
+  knowledge       Knowledge? @relation("KnowledgeVectors", fields: [knowledgeId], references: [id], onDelete: Cascade)
+
+  // Cross-feature support: which module/entity this vector belongs to
+  sourceModule    String    // Module name: "knowledge", "contacts", "opportunities", "events", "interactions", etc.
+  sourceId        String    // Entity ID (articleId, contactId, opportunityId, etc.)
+  sourceType      String    @default("text") // Type: "text", "summary", "description", "comment", etc.
+
+  content         String    @db.Text              // Original text chunk
+  embedding       String?   @db.Text              // JSON array of floats: "[-0.123, 0.456, ...]" (384 dims for MiniLM-L6-v2, 1536 for GPT)
+  embeddingModel  String    @default("minimlm-l6-v2") // Track which model generated this
+  chunkIndex      Int       @default(0)           // Order for multi-chunk documents
+  tokenCount      Int       @default(0)           // For usage tracking
+  hash            String?                         // Dedup same content chunks (nullable, non-unique to allow multi-source)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([knowledgeId])
+  @@index([sourceModule])
+  @@index([sourceId])
+  @@index([sourceModule, sourceId])
+  @@index([embeddingModel])
+  @@index([createdAt])
+  @@index([hash])
+}
+
+/// *
+///  * VectorSearchLog - Audit trail for vector searches (analytics, debugging)
+///  * Tracks RAG queries for performance monitoring and improvement
+///  * Used for search analytics when RAG enabled
+model VectorSearchLog {
+  id                  String    @id @default(cuid())
+  query               String    @db.Text
+  topK                Int       @default(3)
+  minSimilarity       Float     @default(0.6)
+  resultKnowledgeIds  String?   @db.Text            // JSON array of matched knowledge IDs
+  similarityScores    String?   @db.Text            // JSON array of similarity scores
+  responseTimeMs      Int       @default(0)
+  modelUsed           String    @default("minimlm-l6-v2")
+  status              String    @default("success") // success, error, no_results
+
+  userId              String?
+  user                User?     @relation("VectorSearchLogs", fields: [userId], references: [id], onDelete: SetNull)
+  createdAt           DateTime  @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([modelUsed])
+}
+
+/// *
+///  * EmbeddingCache - Cache pre-computed embeddings to reduce API costs
+///  * Stores embeddings by hash to avoid re-computing same content
+///  * Significant cost savings for frequently used content
+model EmbeddingCache {
+  id              String    @id @default(cuid())
+  contentHash     String    @unique              // SHA256 of content
+  content         String    @db.Text            // Original content
+  embedding       String    @db.Text            // JSON array of embedding floats
+  embeddingModel  String                        // e.g. "text-embedding-3-large"
+  dimensions      Int                           // e.g. 3072 for large model
+  tokenCount      Int                           // Tokens used for cost tracking
+  costUSD         Float     @default(0)         // Cost of creating this embedding
+  
+  hitCount        Int       @default(0)         // How many times reused
+  lastUsedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  
+  @@unique([contentHash, embeddingModel])
+  @@index([embeddingModel])
+  @@index([createdAt])
+}
+
+/// *
+///  * RAGSession - Track RAG query sessions for context & conversation
+///  * Enables multi-turn conversations with memory
+///  * Tracks conversation history and costs
+model RAGSession {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation("RAGSessions", fields: [userId], references: [id], onDelete: Cascade)
+  
+  title           String?
+  messageCount    Int       @default(0)
+  totalCostUSD    Float     @default(0)
+  totalTokens     Int       @default(0)
+  
+  status          String    @default("active")
+  lastMessageAt   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  messages        RAGMessage[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// *
+///  * RAGMessage - Individual messages in RAG conversations
+///  * Tracks queries, answers, sources, and performance metrics
+model RAGMessage {
+  id              String    @id @default(cuid())
+  sessionId       String
+  session         RAGSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  role            String
+  query           String    @db.Text
+  answer          String?   @db.Text
+  
+  sourceIds       String?   @db.Text
+  similarityScores String? @db.Text
+  
+  embeddingModel  String?
+  llmModel        String?
+  
+  tokensUsed      Int       @default(0)
+  costUSD         Float     @default(0)
+  responseTimeMs  Int       @default(0)
+  
+  metadata        Json?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([sessionId])
+  @@index([role])
+  @@index([createdAt])
+}
+
+/// *
+///  * RAGFeedback - User feedback on RAG answers for quality improvement
+///  * Tracks accuracy, relevance, usefulness for model retraining
+model RAGFeedback {
+  id              String    @id @default(cuid())
+  messageId       String    @unique
+  userId          String
+  user            User      @relation("RAGFeedback", fields: [userId], references: [id], onDelete: Cascade)
+  
+  rating          Int?
+  isHelpful       Boolean?
+  isAccurate      Boolean?
+  
+  comments        String?   @db.Text
+  suggestedAnswer String?   @db.Text
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@index([isHelpful])
+}
+
+/// *
+///  * RAGMetrics - Aggregate metrics for monitoring RAG performance
+///  * Daily snapshot of system health, costs, and usage
+model RAGMetrics {
+  id              String    @id @default(cuid())
+  date            DateTime  @unique
+  
+  totalQueries    Int       @default(0)
+  totalAnswers    Int       @default(0)
+  averageLatencyMs Int      @default(0)
+  totalTokensUsed Int       @default(0)
+  totalCostUSD    Float     @default(0)
+  
+  avgAccuracy     Float?
+  avgHelpfulness  Float?
+  feedbackCount   Int       @default(0)
+  
+  embeddingModel  String?
+  llmModel        String?
+  
+  metadata        Json?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([date])
+}
+
+// ============================================================================
+// PRICING & SUBSCRIPTION MANAGEMENT
+// ============================================================================
+
+/// *
+///  * PricingPlan - Predefined subscription plans
+///  * Defines available plans (Free, Starter, Professional, Enterprise)
+///  * Can be created/managed by admins
+model PricingPlan {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  slug            String   @unique
+  displayName     String
+  description     String?  @db.Text
+  icon            String?
+  
+  // Pricing
+  monthlyPrice    Float    @default(0)
+  annualPrice     Float?
+  currency        String   @default("USD")
+  
+  // Plan features
+  features        String?  @db.Text // JSON array of feature strings
+  limitations     String?  @db.Text // JSON array of limitations
+  
+  // Plan tier and order
+  tier            String   @default("basic") // free, basic, pro, enterprise
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  
+  // Billing config
+  billingCycle    String   @default("monthly") // monthly, annual, lifetime
+  trialDays       Int      @default(0)
+  
+  // Limits & quotas
+  metadata        Json?    // Custom limits, feature flags, etc.
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String?
+  updatedBy       String?
+  
+  subscriptions   UserSubscription[]
+  
+  @@index([slug])
+  @@index([tier])
+  @@index([isActive])
+  @@index([order])
+}
+
+/// *
+///  * UserSubscription - User's active subscription
+///  * One active subscription per user
+///  * Tracks current plan, renewal date, and status
+model UserSubscription {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation("UserSubscription", fields: [userId], references: [id], onDelete: Cascade)
+  
+  planId          String
+  plan            PricingPlan @relation(fields: [planId], references: [id])
+  
+  // Subscription dates
+  startDate       DateTime @default(now())
+  endDate         DateTime? // Null for active, or set for cancellation
+  renewalDate     DateTime?
+  autoRenew       Boolean  @default(true)
+  
+  // Status
+  status          SubscriptionStatus @default(ACTIVE)
+  
+  // Payment tracking
+  lastPaymentDate DateTime?
+  nextPaymentDate DateTime?
+  lastPaymentId   String?
+  
+  // Trial tracking
+  trialEndDate    DateTime?
+  
+  // Downgrade scheduling
+  scheduledDowngradeAt DateTime? // Date when downgrade will occur (after current period ends)
+  scheduledDowngradePlanId String? // Plan to downgrade to
+  
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  history         SubscriptionHistory[]
+  invoices        Invoice[]
+  
+  @@index([userId])
+  @@index([planId])
+  @@index([status])
+  @@index([renewalDate])
+  @@index([createdAt])
+}
+
+/// *
+///  * SubscriptionHistory - Track all subscription changes
+///  * Records when users upgrade/downgrade/cancel
+///  * Used for analytics and downgrade scheduling
+model SubscriptionHistory {
+  id              String   @id @default(cuid())
+  subscriptionId  String
+  subscription    UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  userId          String
+  
+  // Change details
+  actionType      SubscriptionAction // UPGRADE, DOWNGRADE, RENEW, CANCEL, REACTIVATE
+  fromPlanId      String?
+  toPlanId        String?
+  
+  // Pricing at time of change
+  amount          Float
+  currency        String  @default("USD")
+  
+  // For downgrades - record when it will take effect
+  effectiveDate   DateTime? // When downgrade/cancellation takes effect
+  
+  // Payment/invoice tracking
+  invoiceId       String?
+  paymentId       String?
+  
+  reason          String? @db.Text // Why they downgraded/cancelled
+  notes           String? @db.Text
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([subscriptionId])
+  @@index([userId])
+  @@index([actionType])
+  @@index([createdAt])
+}
+
+/// *
+///  * Invoice - Track all invoices and payments
+///  * One invoice per subscription renewal
+///  * Can have multiple payment attempts
+model Invoice {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation("Invoices", fields: [userId], references: [id], onDelete: Cascade)
+  
+  subscriptionId  String?
+  subscription    UserSubscription? @relation(fields: [subscriptionId], references: [id])
+  
+  // Invoice details
+  invoiceNumber   String   @unique
+  amount          Float
+  currency        String   @default("USD")
+  
+  // Dates
+  issuedAt        DateTime @default(now())
+  dueDate         DateTime
+  paidAt          DateTime?
+  
+  // Status
+  status          InvoiceStatus @default(PENDING)
+  
+  // Period
+  billingPeriodStart DateTime
+  billingPeriodEnd DateTime
+  
+  // Payment tracking
+  paymentId       String?
+  paymentMethod   String? // card, bank_transfer, etc.
+  
+  // Metadata
+  description     String?
+  notes           String? @db.Text
+  metadata        Json?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([invoiceNumber])
+  @@index([issuedAt])
+}
+
+enum SubscriptionStatus {
+  ACTIVE          // User has active subscription
+  TRIAL           // In trial period
+  PAST_DUE        // Payment overdue
+  PAUSED          // Temporarily paused
+  CANCELLED       // Cancelled by user
+  EXPIRED         // Subscription expired
+  PENDING_RENEWAL // Waiting for next renewal
+}
+
+enum SubscriptionAction {
+  CREATED         // New subscription created
+  UPGRADED        // Upgraded to higher plan
+  DOWNGRADED      // Downgraded to lower plan
+  RENEWED         // Subscription renewed
+  CANCELLED       // Subscription cancelled
+  REACTIVATED     // Cancelled sub reactivated
+  TRIAL_STARTED   // Trial started
+  TRIAL_ENDED     // Trial ended
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  SENT
+  PAID
+  PARTIALLY_PAID
+  OVERDUE
+  CANCELLED
+  REFUNDED
+}
+
+/// *
+///  * ChatSession - AI Chat conversation sessions
+///  * Stores chat sessions for AI assistant conversations
+///  * Each session represents a conversation thread
+model ChatSession {
+  id          String       @id @default(cuid())
+  title       String       @default("New Chat")
+  userId      String
+  user        User         @relation("ChatSessions", fields: [userId], references: [id], onDelete: Cascade)
+  messages    ChatMessage[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+/// *
+///  * ChatMessage - Individual messages in chat sessions
+///  * Stores user and AI messages within chat sessions
+///  * Supports streaming and different message types
+model ChatMessage {
+  id          String      @id @default(cuid())
+  sessionId   String
+  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role        String      // "user" or "assistant"
+  content     String      @db.Text
+  createdAt   DateTime    @default(now())
+
+  @@index([sessionId])
+  @@index([createdAt])
+}
