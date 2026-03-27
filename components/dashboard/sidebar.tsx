@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { ChevronDown, ChevronRight, HomeIcon, Loader, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Loader, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { isDevMode } from "@/lib/utils/dev-mode";
 import { isMenuItemActive, isMenuItemOrChildActive } from "@/lib/utils/sidebar-active";
 
-import { Logo } from "./site-logo";
+// import { Logo } from "./site-logo";
 
 interface SidebarProps {
 	isOpen: boolean;
@@ -166,13 +166,16 @@ export function Sidebar({ isOpen, user, isMobile = false, onClose }: SidebarProp
 	};
 
 	return (
-		<aside className={cn("bg-background flex h-screen flex-col border-r transition-all duration-300", isMobile ? "fixed top-0 left-0 z-50 w-64" : "fixed top-0 left-0 z-40", isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : isOpen ? "w-64" : "w-16")}>
+		<aside className={cn("flex h-screen flex-col border-r transition-all duration-300", isMobile ? "fixed top-0 left-0 z-50 w-64" : "fixed top-0 left-0 z-40", isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : isOpen ? "w-64" : "w-16")}>
 			<div className="border-border flex h-16 shrink-0 items-center justify-between overflow-hidden border-b px-3">
 				{isOpen ? (
-					<Logo />
+					<>
+						{/* <Logo /> */}
+						<span className="font-bold text-lg">madeOS</span>
+					</>
 				) : (
 					<div className="flex w-full items-center justify-center text-lg font-bold">
-						<HomeIcon />
+						M
 					</div>
 				)}
 				{isMobile && isOpen && onClose && (
