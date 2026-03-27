@@ -9,9 +9,7 @@ export class StripeService {
 			if (!secretKey) {
 				throw new Error("STRIPE_SECRET_KEY is not configured");
 			}
-			this.stripe = new Stripe(secretKey, {
-				apiVersion: "2026-01-28.clover",
-			});
+			this.stripe = new Stripe(secretKey);
 		}
 		return this.stripe;
 	}

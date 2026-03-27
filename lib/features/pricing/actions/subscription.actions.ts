@@ -325,9 +325,7 @@ export async function createStripePaymentIntentAction(planId: string): Promise<A
 		}
 
 		// Initialize Stripe
-		const stripe = new Stripe(process.env.STRIPE_API_KEY || "", {
-			apiVersion: "2026-01-28.clover",
-		}); // Create payment intent
+		const stripe = new Stripe(process.env.STRIPE_API_KEY || ""); // Create payment intent
 		const paymentIntent = await stripe.paymentIntents.create({
 			amount: Math.round(plan.monthlyPrice * 100), // Convert to cents
 			currency: "usd",
@@ -509,9 +507,7 @@ export async function createStripeSetupIntentAction(): Promise<ActionResult> {
 		}
 
 		// Initialize Stripe
-		const stripe = new Stripe(process.env.STRIPE_API_KEY || "", {
-			apiVersion: "2026-01-28.clover",
-		});
+		const stripe = new Stripe(process.env.STRIPE_API_KEY || "");
 
 		// Create setup intent
 		const setupIntent = await stripe.setupIntents.create({
